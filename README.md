@@ -1,6 +1,6 @@
 # YA-3E-TP2
-##Propuesta de proyecto para TP2
-###Grupo 4: Alonso, Beltram, Rabinovich
+## Propuesta de proyecto para TP2
+### Grupo 4: Alonso, Beltram, Rabinovich
 
 A la hora de jugar un partido con amigos, puede presentarse la problemática de no contar con una cancha disponible en el horario deseado. Ante esta situación, la búsqueda de un nuevo espacio puede complicarse y resultar infructuosa. Para resolverlo, se propone la creación de una página online para la gestión de partidos de fútbol en CABA.
 La aplicación permite la registración de un usuario como dueño de una cancha de fútbol, y como jugador. El dueño de la cancha genera los partidos según la disponibilidad de sus horarios de atención. Cada partido se genera con un tiempo de 1 hora, y con todas las vacantes para que sean tomadas por los usuarios jugadores, dependiendo del tamaño de la cancha (si de fútbol 5, serán 10 vacantes, 5 por equipo).

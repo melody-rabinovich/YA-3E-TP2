@@ -3,7 +3,7 @@ class Aplicacion{
         this.canchasRegistradas = []
     }
     disponibilidadDiaHorario(hora, dia, mes){
-
+        // completar
     }
 
 }
@@ -129,14 +129,15 @@ class Cancha {
             }
             for (let i = this.numHoraToPosision(horaComunInicio); i <= this.numHoraToPosision(horaComunFin); i++) {
                 if(this.calendario2023[mes][dia][i].estaDisponible()){
-                    console.log(this.calendario2023[mes][dia][i].numHora);
-                    horasDisponibles.push[this.calendario2023[mes][dia][i]];
+                    //console.log(this.calendario2023[mes][dia][i].numHora);
+                    horasDisponibles.push(this.calendario2023[mes][dia][i]);
 //                    console.log(horasDisponibles[horasDisponibles.length-1].numHora);
                 }
             }
         } else {
             console.log("La cancha no está abierta en ese rango horario.");
         }
+        //console.log( horasDisponibles)
         return horasDisponibles;
     }
 
@@ -146,9 +147,7 @@ class Cancha {
  */
     listarDisponibilidad(mes, dia, horaInicio, horaFin){
         const disponibilidad = this.getDisponibilidad(mes, dia, horaInicio, horaFin);
-        console.log("hola2");
         if(disponibilidad.length != 0){
-            console.log("hola3");
             for(let i = 0; i < disponibilidad.length; i++){
                 console.log(disponibilidad[i].numHora);
             }

@@ -1,5 +1,7 @@
 # YA-3E-TP2
+
 ## Propuesta de proyecto para TP2
+
 ### Grupo 4: Alonso, Beltram, Rabinovich
 
 A la hora de jugar un partido con amigos, puede presentarse la problemática de no contar con una cancha disponible en el horario deseado. Ante esta situación, la búsqueda de un nuevo espacio puede complicarse y resultar infructuosa. Para resolverlo, se propone la creación de una página online para la gestión de partidos de fútbol en CABA.

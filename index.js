@@ -10,8 +10,18 @@ let jugador1 = new UsuarioJugador("Jaime")
 jugador1.reservar(cancha,0,0,1400);
 jugador1.reservar(cancha,0,0,1400);
 jugador1.reservar(cancha,0,0,2000);
+
+let jugador2 = new UsuarioJugador("Lucas");
 //cancha.otorgarReserva(0,0,1000);
 //cancha.otorgarReserva(0,0,1400);
 //cancha.otorgarReserva(0,0,1400);
 
 cancha.listarDisponibilidad(0,0,0,2300);
+console.log();
+cancha.listarDisponibilidad(0,0);
+console.log();
+jugador1.listarReservas();
+console.log();
+cancha.eliminarReserva(0,0,2000,jugador1);
+console.log();
+jugador1.listarReservas();

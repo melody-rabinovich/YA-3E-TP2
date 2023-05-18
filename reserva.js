@@ -1,7 +1,9 @@
 class Reserva {
-    constructor(titular, horaInicio){
-        this.titular = titular,
-        this.horaInicio = horaInicio
+    constructor(mes, dia, horaInicio, titular){
+        this.mes = mes,
+        this.dia = dia,
+        this.horaInicio = horaInicio,
+        this.titular = titular
     }
 };
 

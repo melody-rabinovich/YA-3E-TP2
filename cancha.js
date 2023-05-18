@@ -89,9 +89,9 @@ class Cancha {
 
     otorgarReserva(mes, dia, numHora, titular){
         if(numHora >= this.horariosAtencion[0] && numHora <= this.horariosAtencion[1]){
-            let nuevaReserva = this.calendario2023[mes][dia][this.numHoraToPosision(numHora)].reservar(titular, numHora);
+            let nuevaReserva = this.calendario2023[mes][dia][this.numHoraToPosision(numHora)].reservar(mes, dia, numHora, titular);
             if(nuevaReserva !== null){
-                titular.reservas.push[nuevaReserva];
+                titular.reservas.push(nuevaReserva);
                 console.log("Se ha registrado su reserva.");
             } else {
                 console.log("No se ha podido efectuar su reserva porque la cancha ya está reservada en ese horario.");
@@ -101,7 +101,30 @@ class Cancha {
         }
     }
 
-    getDisponibilidad(mes, dia, horaInicio, horaFin){
+    eliminarReserva(mes, dia, numHora, titular){
+        // No se está contemplando la posibilidad de que el usuario se cree una reserva por su parte, ya que aquí una
+        // reserva existe sí o sí en ambos arrays, el de la cancha y el del usuario.
+        let horario = this.calendario2023[mes][dia][this.numHoraToPosision(numHora)];
+        if(!horario.estaDisponible()){
+            if(horario.reserva.titular == titular){
+                console.log("letra");
+                // Acá pusimos un cero ("0") porque necesitamos el intex de la reserva en el array de reservas del
+                // usuario, y no tenemos uno. Por lo tanto, hardcodeamos la primera posición del array.
+                titular.reservas.splice(0, 1);
+/*                titular.reservas = titular.reservas.map(reserva => {
+                    if(reserva.mes != mes && reserva.dia != dia && reserva.horaInicio != numHora){
+                        return reserva;
+                    }
+                });*/
+            } else {
+                console.log("Usted no es el titular de la reserva, por lo que no puede cancelarla.");
+            }
+        } else{
+            console.log("Esta cancha no tiene esa hora reservada. Está disponible.");
+        }
+    }
+
+    getDisponibilidad(mes, dia, horaInicio = 0, horaFin = 2300){
         let horasDisponibles = [];
         // Hay que chequear que exista al menos una hora de disponibilidad, por lo que evaluamos si el fin del horario
         // de interés es más tarde que mi hora de apertura, o que el comienzo del horario de interés es más temprano que
@@ -133,10 +156,6 @@ class Cancha {
         return horasDisponibles;
     }
 
-/*     getDisponibilidad(mes, dia){
-        this.getDisponibilidad(mes, dia, 0, 2300);
-    }
- */
     listarDisponibilidad(mes, dia, horaInicio, horaFin){
         const disponibilidad = this.getDisponibilidad(mes, dia, horaInicio, horaFin);
         if(disponibilidad.length != 0){

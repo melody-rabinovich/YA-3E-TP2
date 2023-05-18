@@ -10,9 +10,9 @@ class Horario {
         return this.reserva === null;
     }
 
-    reservar(titular, horaInicio){
+    reservar(mes, dia, horaInicio, titular){
         if (this.estaDisponible()){
-            this.reserva = new Reserva(titular, horaInicio);
+            this.reserva = new Reserva(mes, dia, horaInicio, titular);
             return this.reserva;
         }else{
             return null;

@@ -1,7 +1,6 @@
 class Usuario {
     constructor(nombre){
-        this.nombre = nombre,
-        this.reservas = []
+        this.nombre = nombre
     }
 };
 
@@ -19,6 +18,11 @@ class UsuarioJugador extends Usuario {
     };
     reservar(cancha, mes, dia, numHora){
         cancha.otorgarReserva(mes, dia, numHora, this);
+    }
+    listarReservas(){
+        this.reservas.forEach(reserva => {
+            console.log(reserva);
+        });
     }
 };
 

@@ -1,10 +1,13 @@
 class Usuario {
+    static ultimoID = 0;
+
     constructor(nombre){
+        this.id = ++Usuario.ultimoID,
         this.nombre = nombre
     }
 };
 
-class UsuarioDueño extends Usuario {
+class UsuarioDuenio extends Usuario {
     constructor(nombre, canchas){
         super(nombre),
         this.canchas = canchas
@@ -28,7 +31,6 @@ class UsuarioJugador extends Usuario {
 
 module.exports = {
     Usuario,
-    UsuarioDueño,
+    UsuarioDuenio,
     UsuarioJugador
 }
-

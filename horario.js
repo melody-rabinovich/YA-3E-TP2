@@ -1,7 +1,10 @@
 const Reserva = require('./reserva');
 
 class Horario {
+    static ultimoID = 0;
+
     constructor(numHora){
+        this.id = ++Horario.ultimoID,
         this.numHora = numHora,
         this.reserva = null
     }

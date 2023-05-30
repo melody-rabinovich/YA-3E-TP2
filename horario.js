@@ -13,11 +13,11 @@ class Horario {
         return this.reserva === null;
     }
 
-    reservar(mes, dia, horaInicio, titular){
+    reservar(mes, dia, horaInicio, titular, cancha){
         if (this.estaDisponible()){
-            this.reserva = new Reserva(mes, dia, horaInicio, titular);
+            this.reserva = new Reserva(mes, dia, horaInicio, titular, cancha);
             return this.reserva;
-        }else{
+        } else {
             return null;
         }
     }

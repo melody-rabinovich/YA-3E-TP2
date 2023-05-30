@@ -1,3 +1,5 @@
+const Cancha = require("./cancha");
+
 class Usuario {
     static ultimoID = 0;
 
@@ -8,9 +10,28 @@ class Usuario {
 };
 
 class UsuarioDuenio extends Usuario {
-    constructor(nombre, canchas){
+    constructor(nombre){
         super(nombre),
-        this.canchas = canchas
+        this.canchas = []
+    }
+
+    canchaRegistrada(direccion){
+        let canchaRegistrada = false;
+        let i = 0;
+        while(i < canchas.length && !canchaRegistrada){
+            canchaRegistrada = (canchas[i].direccion == direccion);
+            i++;
+        }
+        return canchaRegistrada;
+    }
+
+    registrarCancha(nombre, duenio, direccion, tamanio, precio, horariosAtencion){
+        if(!canchaRegistrada(direccion)){
+            this.canchas.push(new Cancha(nombre, duenio, direccion, tamanio, precio, horariosAtencion))
+            console.log("Cancha registrada.");
+        } else {
+            console.log("Ya cuenta con una cancha registrada en esa dirección.");
+        }
     }
 };
 
@@ -24,7 +45,7 @@ class UsuarioJugador extends Usuario {
     }
     listarReservas(){
         this.reservas.forEach(reserva => {
-            console.log(reserva);
+            console.log(reserva.toString());
         });
     }
 };

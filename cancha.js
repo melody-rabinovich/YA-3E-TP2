@@ -3,9 +3,10 @@ const Horario = require("./horario");
 class Cancha {
     static ultimoID = 0;
 
-    constructor(nombre, direccion, tamanio, precio, horariosAtencion){
+    constructor(nombre, duenio, direccion, tamanio, precio, horariosAtencion){
         this.id = ++Cancha.ultimoID,
         this.nombre = nombre,
+        this.duenio = duenio,
         this.direccion = direccion,
         this.tamanio = tamanio,
 //      El horario de atención consiste en un array de dos números; el primero es la hora de apertura, y el segundo, la de cierre.
@@ -16,7 +17,13 @@ class Cancha {
 //      El calendario es un array de meses; un mes es un array de días; un día es un array de horas; cada hora puede o no
 //      tener una reserva asignada.
         this.calendario2023 = this.setCalendario2023([horariosAtencion[0],this.ultimaHoraActiva]),
-        this.precio = precio
+        this.precio = precio,
+        this.reservasCanceladas = []
+    }
+
+    toString(){
+        return "Nombre: " + this.nombre + " | Dirección: " + this.direccion + " | Tamaño: fútbol " + this.tamanio + 
+        " | Horarios de atención: de " + this.horariosAtencion[0] + " a " + this.horariosAtencion[1];
     }
 
     setCalendario2023(horarioActivo){
@@ -102,30 +109,37 @@ class Cancha {
 
     otorgarReserva(mes, dia, numHora, titular){
         if(this.horaActiva(numHora)){
-            let nuevaReserva = this.calendario2023[mes][dia][this.numHoraToPosision(numHora)].reservar(mes, dia, numHora, titular);
+            let nuevaReserva = this.calendario2023[mes][dia][this.numHoraToPosision(numHora)].reservar(mes, dia, numHora, titular, this);
             if(nuevaReserva !== null){
                 titular.reservas.push(nuevaReserva);
                 console.log("Se ha registrado su reserva.");
             } else {
                 console.log("No se ha podido efectuar su reserva porque la cancha ya está reservada en ese horario.");
             }
-        } else{
+        } else {
             console.log("Esta cancha no abre en la hora solicitada.");
         }
     }
 
-    eliminarReserva(mes, dia, numHora, titular){
+    desocuparHorario(mes, dia, numHora){
+        this.calendario2023[mes][dia][this.numHoraToPosision(numHora)].reserva = null;
+    }
+
+    cancelarReserva(mes, dia, numHora, titular){
         // No se está contemplando la posibilidad de que el usuario se cree una reserva por su parte, ya que aquí una
         // reserva existe sí o sí en ambos arrays, el de la cancha y el del usuario.
         if(this.horaActiva(numHora)){
             let horario = this.calendario2023[mes][dia][this.numHoraToPosision(numHora)];
             if(!horario.estaDisponible()){
                 if(horario.reserva.titular == titular){
-                    titular.reservas = titular.reservas.filter(reserva => reserva.id != horario.reserva.id);
+//                  titular.reservas = titular.reservas.filter(reserva => reserva.id != horario.reserva.id);
+                    this.reservasCanceladas.push(horario.reserva);
+                    horario.reserva.cancelarReserva();
+                    this.desocuparHorario(mes, dia, numHora);
                 } else {
                     console.log("Usted no es el titular de la reserva, por lo que no puede cancelarla.");
                 }
-            } else{
+            } else {
                 console.log("No hay reserva para las " + numHora + ". La cancha está disponible a esa hora.");
             }
         } else {
@@ -134,7 +148,7 @@ class Cancha {
     }
 
     getDisponibilidad(mes, dia, horaInicio = 0, horaFin = 2300){
-        const horasDisponibles = [];
+        const horariosDisponibles = [];
         // Hay que chequear que exista al menos una hora de disponibilidad, por lo que evaluamos si el fin del horario
         // de interés es más tarde que mi hora de apertura, o si el comienzo del horario de interés es más temprano que
         // la hora de cierre.
@@ -154,17 +168,17 @@ class Cancha {
 
             for (let i = this.numHoraToPosision(horaComunInicio); i <= this.numHoraToPosision(horaComunFin); i++) {
                 if(this.calendario2023[mes][dia][i].estaDisponible()){
-                    horasDisponibles.push(this.calendario2023[mes][dia][i]);
+                    horariosDisponibles.push(this.calendario2023[mes][dia][i]);
                 }
             }
 
-            if (horasDisponibles.length == 0){
+            if (horariosDisponibles.length == 0){
                 console.log("La cancha no está disponible en ese rango horario.");
             }
         } else {
             console.log("La cancha no está abierta en ese rango horario.");
         }
-        return horasDisponibles;
+        return horariosDisponibles;
     }
 
     listarDisponibilidad(mes, dia, horaInicio = 0, horaFin = 2300){
@@ -173,6 +187,14 @@ class Cancha {
             for(let i = 0; i < disponibilidad.length; i++){
                 console.log(disponibilidad[i].numHora);
             }
+        }
+    }
+
+    tieneDisponibilidad(mes, dia, hora){
+        if(this.horaActiva(hora)){
+            return this.calendario2023[mes][dia][this.numHoraToPosision(hora)].estaDisponible();
+        } else {
+            return false;
         }
     }
 };

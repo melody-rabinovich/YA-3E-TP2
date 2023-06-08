@@ -6,12 +6,17 @@ class Cancha {
         this.direccion = direccion,
         this.tamanio = tamanio,
 //      Si el horario de atención es de 14 a 24, se computa como 1400 a 2300, ya que cuenta desde el inicio de la última hora
+        this.precio = precio,    
         this.horariosAtencion = horariosAtencion,
-        this.calendario2023 = this.setCalendario2023(horariosAtencion),
-        this.precio = precio
+        this.calendario2023 = this.setCalendario2023(horariosAtencion)
     }
 
     setCalendario2023(horariosAtencion){
+       /* if (horariosAtencion === undefined) {
+            console.error("Los horarios de atención no están definidos.");
+            return null; // O realiza alguna acción de manejo de errores apropiada
+          }*/
+          
         let cantMeses = 12;
         let meses = [];
         for (let i = 0; i < cantMeses; i++){

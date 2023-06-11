@@ -26,4 +26,14 @@ router.post("/", async function (req, res, next) {
     });
 });
 
+router.get("/", async function (req, res, next) {
+  try {
+    const usuarios = await usuarioController.getUsers();
+    res.json(usuarios);
+  } catch (error) {
+    console.log("Error al obtener los usuarios", error);
+    res.status(500).json({ error: "Ocurrió un error al obtener los usuarios" });
+  }
+});
+
 module.exports = router;

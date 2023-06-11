@@ -29,7 +29,18 @@ const crearUsuarioDuenio = async (req, res) => {
   res.status(201).json({ duenio });
 };
 
+async function getUsers(res) {
+  try {
+    const usuarios = await userData.traerTodos();
+    return usuarios;
+  } catch (error) {
+    console.log("Error al obtener los usuarios", error);
+    throw error;
+  }
+}
+
 module.exports = {
   crearUsuarioJugador,
   crearUsuarioDuenio,
+  getUsers,
 };

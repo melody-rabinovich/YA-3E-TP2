@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
 const usuarioRouter = require("./routes/usuarioDuenio.js");
+const canchaRouter = require("./routes/cancha.js");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/usuarios", usuarioRouter);
+app.use("/canchas", canchaRouter);
 
 //Conecto a la base de datos
 conectar()

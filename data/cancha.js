@@ -17,4 +17,16 @@ const traerTodos = async () => {
   }
 };
 
-module.exports = { traerTodos };
+const insertarCancha = async (cancha) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("mycollection");
+
+  try {
+    const result = await collection.insertOne(cancha);
+    console.log("Cancha insertada con éxito: ", result.insertedId);
+  } catch (error) {
+    console.error("Error al insertar la cancha", error);
+  }
+};
+
+module.exports = { traerTodos, insertarCancha };

@@ -10,23 +10,24 @@ const crearUsuarioJugador = async (req, res) => {
   res.status(201).json({ jugador });
 };
 
-const crearUsuarioDuenio = async (req, res) => {
-  console.log("Estoy en creando usuarioDuenio con el nombre: " + req.body);
+const crearUsuarioDuenio = async (body) => {
+  //console.log("Estoy en creando usuarioDuenio con el nombre: " + req.nombre);
 
-  if (req.body.nombre == undefined) {
+  /*if (req.nombre == undefined) {
     return res.status(400).json({
-      message: "No se inserto el nombre",
+      message: "No se inserto el nombre dentro de usuarioController",
     });
-  }
+  }*/
 
-  console.log("Creo el usuario dueño");
+  //console.log("Creo el usuario dueño");
 
-  const duenio = new UsuarioDueño(req.body);
-  console.log("el usuario es " + duenio);
+  const duenio = new UsuarioDueño(body.nombre);
+  // console.log("el usuario es " + duenio);
 
-  userData.insertarUsuarioDuenio(duenio);
+  const usuarioInsertado = await userData.insertarUsuarioDuenio(duenio);
 
-  res.status(201).json({ duenio });
+  return usuarioInsertado;
+  //res.status(201).json({ duenio });
 };
 
 async function getUsers(res) {

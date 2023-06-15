@@ -8,22 +8,24 @@ router.post("/", async function (req, res, next) {
 
   if (req.body.nombre == undefined) {
     return res.status(400).json({
-      message: "No se inserto el nombre",
+      message: "No se inserto el nombre dentro de usuarioDuenio Routes",
     });
   }
-  console.log(body);
+  console.log(body.nombre);
 
-  await usuarioController
-    .crearUsuarioDuenio(body)
-    .then((response) => {
-      res.status(201).json({
-        message: body.nombre + " fue creado como duenio exitosamente",
-        response: response,
-      });
-    })
-    .catch((err) => {
-      res.status(400).json(err);
+  try {
+    const response = await usuarioController.crearUsuarioDuenio(body);
+    //.then((response) => {
+    res.status(201).json({
+      message: body.nombre + " fue creado como duenio exitosamente",
+      response: response,
     });
+    //})
+  } catch (err) {
+    res
+      .status(400)
+      .json({ mensaje: "Soy el catch del usuarioDuenio", err: err.message });
+  }
 });
 
 router.get("/", async function (req, res, next) {

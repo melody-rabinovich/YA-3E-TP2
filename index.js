@@ -5,10 +5,8 @@ const app = express();
 const port = 3000;
 const usuarioRouter = require("./routes/usuarioDuenio.js");
 const canchaRouter = require("./routes/cancha.js");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-
-//Sin esta linea no funciona el POST por el formato de JSON
+const path = require("path");
+const cookieParser = require("cookie-parser");
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -38,9 +36,6 @@ app.get("/", (req, res) => {
 
 /*¿Todos los get y post y las interacciones con el servidor se hacen desde el index.js?
 //Se crean dueños y jugador por solicitudes POST hacia el servidor
-app.post('/usuarios', crearUsuarioJugador);
-app.post('/duenio', crearUsuarioDuenio);
-
 app.post('/cancha', crearCancha);
 
 

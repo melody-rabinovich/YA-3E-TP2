@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const canchaController = require("../controllers/canchaController.js");
+const canchaController = require("../services/canchaService.js");
 
 router.get("/", async function (req, res, next) {
   try {

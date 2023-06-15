@@ -3,9 +3,22 @@ const { conectar } = require("./database");
 const bodyParser = require("body-parser");
 const app = express();
 const port = 3000;
+const usuarioRouter = require("./routes/usuarioDuenio.js");
+const canchaRouter = require("./routes/cancha.js");
+const path = require("path");
+const cookieParser = require("cookie-parser");
 
-//Sin esta linea no funciona el POST por el formato de JSON
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
 app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use("/usuarios", usuarioRouter);
+app.use("/canchas", canchaRouter);
 
 //Conecto a la base de datos
 conectar()
@@ -23,9 +36,6 @@ app.get("/", (req, res) => {
 
 /*¿Todos los get y post y las interacciones con el servidor se hacen desde el index.js?
 //Se crean dueños y jugador por solicitudes POST hacia el servidor
-app.post('/usuarios', crearUsuarioJugador);
-app.post('/duenio', crearUsuarioDuenio);
-
 app.post('/cancha', crearCancha);
 
 
@@ -55,3 +65,5 @@ app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}
  http://localhost:3000/`);
 });
+
+module.exports = app;

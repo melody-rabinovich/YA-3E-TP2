@@ -2,18 +2,20 @@
 const Cancha = require("../models/cancha");
 const canchaData = require("../data/cancha");
 
-const crearCancha = async (request, response) => {
-  const { nombre, direccion, tamanio, precio, horariosAtencion } = request.body;
-
+const crearCancha = async (body) => {
   const cancha = new Cancha(
-    nombre,
-    direccion,
-    tamanio,
-    precio,
-    horariosAtencion
+    body.nombre,
+    body.tamanio,
+    body.precio,
+    body.horarioAtencion
   );
 
-  response.status(201).json({ cancha });
+  console.log("Estoy " + cancha);
+
+  const canchaInsertada = await canchaData.insertarCancha(cancha);
+  console.log(canchaInsertada);
+
+  return canchaInsertada;
 };
 
 async function getCanchas(res) {

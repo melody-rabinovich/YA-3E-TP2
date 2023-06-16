@@ -116,5 +116,6 @@ cancha1.otorgarReserva(fechaActual, 12, usuario1);
 // intento reservar en el mismo horario
 cancha1.otorgarReserva(fechaActual, 12, usuario1);
 
-//console.log(cancha1.calendario2023[5][10]);
+console.log(cancha1.calendario2023[5][10]);
+console.log(cancha1.calendario2023[5][11]);
 //console.log(cancha1.calendario2023[5][10].reservas[1].titular);

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const usuarioService = require("../services/usuarioService");
 
-router.post("/", async function (req, res, next) {
+router.post("/", async function (req, res) {
   let body = req.body;
   if (req.body.nombre == undefined) {
     return res.status(400).json({

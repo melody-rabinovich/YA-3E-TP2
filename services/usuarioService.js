@@ -34,7 +34,7 @@ const crearUsuarioDuenio = async (body) => {
   }
 };
 
-async function getUsers(res) {
+async function getUsers() {
   try {
     const usuarios = await userData.traerTodos();
     return usuarios;

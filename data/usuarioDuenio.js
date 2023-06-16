@@ -1,3 +1,4 @@
+const ObjectId = require("mongodb").ObjectId;
 const { obtenerCliente } = require("../database");
 
 const insertarUsuarioDuenio = async (duenio) => {
@@ -23,11 +24,23 @@ const traerTodos = async () => {
     return documentos;
   } catch (error) {
     console.log("Error al traer a los duenios", error);
-    res.status(500).json({ error: "Ocurrio un error al obtener los usuarios" });
+  }
+};
+
+const traerUsuarioId = async (id) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("usuarios");
+
+  try {
+    const user = await collection.findOne({ _id: new ObjectId(id) });
+    return user;
+  } catch (error) {
+    console.log("Error al traer a los duenios", error);
   }
 };
 
 module.exports = {
   insertarUsuarioDuenio,
   traerTodos,
+  traerUsuarioId,
 };

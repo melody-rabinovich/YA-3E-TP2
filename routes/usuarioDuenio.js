@@ -22,13 +22,26 @@ router.post("/", async function (req, res, next) {
   }
 });
 
-router.get("/", async function (req, res, next) {
+router.get("/", async function (req, res) {
   try {
     const usuarios = await usuarioService.getUsers();
     res.json(usuarios);
   } catch (error) {
     console.log("Error al obtener los usuarios", error);
     res.status(500).json({ error: "Ocurrió un error al obtener los usuarios" });
+  }
+});
+
+router.get("/:id", async function (req, res, next) {
+  let miUsuario = await usuarioService.getUsuarioById(req.params.id);
+
+  if (miUsuario) {
+    res.json(miUsuario);
+  } else {
+    res.status(404).json({
+      error: "NOT FOUND",
+      code: 404,
+    });
   }
 });
 

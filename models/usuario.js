@@ -1,6 +1,6 @@
-const idGenerator = require("../utils/idGenerator.js");
+const { idGeneratorUsuario } = require("../utils/idGenerator.js");
 
-const usuarioGenerator = idGenerator;
+const usuarioGenerator = idGeneratorUsuario();
 
 class Usuario {
   constructor(nombre) {

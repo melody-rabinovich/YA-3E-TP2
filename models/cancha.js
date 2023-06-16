@@ -1,8 +1,8 @@
 const Dia = require("./dia");
 const Usuario = require("./usuario");
-const idGenerator = require("../utils/idGenerator.js");
+const { idGeneratorCancha } = require("../utils/idGenerator.js");
 
-const canchaIdGenerator = idGenerator;
+const canchaIdGenerator = idGeneratorCancha();
 
 class Cancha {
   constructor(nombre, precio) {

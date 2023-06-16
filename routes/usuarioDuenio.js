@@ -1,26 +1,27 @@
 const express = require("express");
 const router = express.Router();
-const usuarioController = require("../services/usuarioService");
+const usuarioService = require("../services/usuarioService");
 
-router.post("/", async function (req, res, next) {
+router.post("/", async function (req, res) {
   let body = req.body;
-  console.log(body);
-
   if (req.body.nombre == undefined) {
     return res.status(400).json({
       message: "No se inserto el nombre dentro de usuarioDuenio Routes",
     });
+  } else if (req.body.mail == undefined) {
+    return res.status(400).json({
+      message: "No se inserto el mail, intentelo nuevamente",
+    });
   }
-  console.log(body.nombre);
-
   try {
-    const response = await usuarioController.crearUsuarioDuenio(body);
-    //.then((response) => {
+    const response = await usuarioService.crearUsuarioDuenio(body);
     res.status(201).json({
-      message: body.nombre + " fue creado como duenio exitosamente",
+      message:
+        body.nombre +
+        " fue creado como usuario exitosamente con el mail " +
+        body.mail,
       response: response,
     });
-    //})
   } catch (err) {
     res
       .status(400)
@@ -28,13 +29,26 @@ router.post("/", async function (req, res, next) {
   }
 });
 
-router.get("/", async function (req, res, next) {
+router.get("/", async function (req, res) {
   try {
-    const usuarios = await usuarioController.getUsers();
+    const usuarios = await usuarioService.getUsers();
     res.json(usuarios);
   } catch (error) {
     console.log("Error al obtener los usuarios", error);
     res.status(500).json({ error: "Ocurrió un error al obtener los usuarios" });
+  }
+});
+
+router.get("/:id", async function (req, res, next) {
+  let miUsuario = await usuarioService.getUsuarioById(req.params.id);
+
+  if (miUsuario) {
+    res.json(miUsuario);
+  } else {
+    res.status(404).json({
+      error: "NOT FOUND",
+      code: 404,
+    });
   }
 });
 

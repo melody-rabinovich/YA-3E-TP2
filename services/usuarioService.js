@@ -1,36 +1,40 @@
 const { UsuarioJugador, UsuarioDueño } = require("../models/usuario.js");
 const userData = require("../data/usuarioDuenio.js");
 
-const crearUsuarioJugador = async (req, res) => {
+/*const crearUsuarioJugador = async (req, res) => {
   const { nombre } = req.body;
-
   const jugador = new UsuarioJugador(nombre);
-
-  //Enviar respuesta con el usuario creado
   res.status(201).json({ jugador });
-};
+};*/
 
+/*const crearUsuarioDuenio = async (body) => {
+  try {
+    const mailExistente = await userData.validarMail(body.mail);
+    if (mailExistente) {
+      throw new Error("El mail ya está registrado");
+    }
+    const duenio = new UsuarioDueño(body.nombre, body.mail);
+    const usuarioInsertado = await userData.insertarUsuarioDuenio(duenio);
+    return usuarioInsertado;
+  } catch (error) {
+    throw error;
+  }
+};*/
 const crearUsuarioDuenio = async (body) => {
-  //console.log("Estoy en creando usuarioDuenio con el nombre: " + req.nombre);
-
-  /*if (req.nombre == undefined) {
-    return res.status(400).json({
-      message: "No se inserto el nombre dentro de usuarioController",
-    });
-  }*/
-
-  //console.log("Creo el usuario dueño");
-
-  const duenio = new UsuarioDueño(body.nombre);
-  // console.log("el usuario es " + duenio);
-
-  const usuarioInsertado = await userData.insertarUsuarioDuenio(duenio);
-
-  return usuarioInsertado;
-  //res.status(201).json({ duenio });
+  const mailExistente = await userData.validarMail(body.mail);
+  if (mailExistente) {
+    throw new Error("El mail ya está registrado");
+  }
+  try {
+    const duenio = new UsuarioDueño(body.nombre, body.mail);
+    const usuarioInsertado = await userData.insertarUsuarioDuenio(duenio);
+    return usuarioInsertado;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-async function getUsers(res) {
+async function getUsers() {
   try {
     const usuarios = await userData.traerTodos();
     return usuarios;
@@ -40,8 +44,19 @@ async function getUsers(res) {
   }
 }
 
+async function getUsuarioById(id) {
+  try {
+    const usuario = await userData.traerUsuarioId(id);
+    return usuario;
+  } catch (error) {
+    console.log(`Error al obtener el usuario con id: ${id}`, error);
+    throw error;
+  }
+}
+
 module.exports = {
-  crearUsuarioJugador,
+  // crearUsuarioJugador,
   crearUsuarioDuenio,
   getUsers,
+  getUsuarioById,
 };

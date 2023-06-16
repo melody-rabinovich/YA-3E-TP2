@@ -60,7 +60,6 @@ cancha.eliminarReserva(0,0,2000,jugador1);
 console.log();
 jugador1.listarReservas();*/
 
-// Levanta el servidor en el puerto 3000 http://localhost:3000/
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}
  http://localhost:3000/`);

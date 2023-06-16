@@ -33,7 +33,7 @@ class Cancha {
     const dia = this.calendario2023[mes][date];
     //console.log(dia);
 
-    if (dia && dia.estaDisponible()) {
+    if (dia && dia.estaDisponible(numHora)) {
       const nuevaReserva = dia.reservar(numHora, titular);
 
       if (nuevaReserva !== null) {
@@ -117,4 +117,4 @@ cancha1.otorgarReserva(fechaActual, 11, usuario1);
 cancha1.otorgarReserva(fechaActual, 12, usuario1);
 
 console.log(cancha1.calendario2023[5][10]);
-console.log(cancha1.calendario2023[5][10].reserva[1].titular);
+console.log(cancha1.calendario2023[5][10].reservas[1].titular);

@@ -4,7 +4,6 @@ const traerTodos = async () => {
   console.log("Estoy trayendo todas las canchas");
 
   const cliente = obtenerCliente();
-
   const collection = cliente.db("mydatabase").collection("canchas");
 
   try {
@@ -19,7 +18,7 @@ const traerTodos = async () => {
 
 const insertarCancha = async (cancha) => {
   const cliente = obtenerCliente();
-  const collection = cliente.db("mydatabase").collection("mycollection");
+  const collection = cliente.db("mydatabase").collection("canchas");
 
   try {
     const result = await collection.insertOne(cancha);

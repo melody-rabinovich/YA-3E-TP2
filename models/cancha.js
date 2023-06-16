@@ -1,8 +1,12 @@
 const Dia = require("./dia");
 const Usuario = require("./usuario");
+const idGenerator = require("../utils/idGenerator.js");
+
+const canchaIdGenerator = idGenerator;
 
 class Cancha {
   constructor(nombre, precio) {
+    this.id = canchaIdGenerator.next().value;
     this.nombre = nombre;
     this.calendario2023 = this.setCalendario2023();
     this.precio = precio;
@@ -27,19 +31,13 @@ class Cancha {
   otorgarReserva(fecha, numHora, titular) {
     const mes = fecha.getMonth();
     const date = fecha.getDate();
-    //console.log("El mes es: " + mes);
-    //console.log("El dia es: " + date);
 
     const dia = this.calendario2023[mes][date];
-    //console.log(dia);
-
     if (dia && dia.estaDisponible(numHora)) {
       const nuevaReserva = dia.reservar(numHora, titular);
 
       if (nuevaReserva !== null) {
         //titular.agregarReserva(nuevaReserva);
-        console.log(titular);
-
         console.log("Se ha registrado su reserva.");
       } else {
         console.log(
@@ -118,5 +116,5 @@ cancha1.otorgarReserva(fechaActual, 12, usuario1);
 // intento reservar en el mismo horario
 cancha1.otorgarReserva(fechaActual, 12, usuario1);
 
-console.log(cancha1.calendario2023[5][10]);
-console.log(cancha1.calendario2023[5][10].reservas[1].titular);
+//console.log(cancha1.calendario2023[5][10]);
+//console.log(cancha1.calendario2023[5][10].reservas[1].titular);

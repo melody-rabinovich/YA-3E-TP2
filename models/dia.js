@@ -12,7 +12,7 @@ class Dia {
 
     while (i < this.reservas.length && disponible){
       if (this.reservas[i].numHora == hora){
-        disponible == false;
+        disponible = false;
       } else{
         i ++;
       }
@@ -24,7 +24,6 @@ class Dia {
   reservar(numHora, titular) {
     // creo que la validación corresponde hacerla acá.
     // la estamos haciendo también desde Cancha otorgarReserva()
-   console.log(this.estaDisponible(numHora))
     if (this.estaDisponible(numHora)) {
       let reserva = new Reserva(numHora, titular);
       this.reservas.push(reserva);

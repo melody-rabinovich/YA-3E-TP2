@@ -115,9 +115,8 @@ const fechaActual = new Date(2023, 5, 10);
 cancha1.otorgarReserva(fechaActual, 10, usuario1.nombre);
 cancha1.otorgarReserva(fechaActual, 11, usuario1);
 cancha1.otorgarReserva(fechaActual, 12, usuario1);
-// no me está funcionando el while en estaDisponible() para verificar si la reserva está repetida. 
-//Se queda eternamente, sólo cuando ya existe una reserva en el mismo horario
-// cancha1.otorgarReserva(fechaActual, 12, usuario1);
+// intento reservar en el mismo horario
+cancha1.otorgarReserva(fechaActual, 12, usuario1);
 
 console.log(cancha1.calendario2023[5][10]);
 console.log(cancha1.calendario2023[5][10].reservas[1].titular);

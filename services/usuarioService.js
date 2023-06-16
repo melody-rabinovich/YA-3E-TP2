@@ -7,10 +7,31 @@ const userData = require("../data/usuarioDuenio.js");
   res.status(201).json({ jugador });
 };*/
 
+/*const crearUsuarioDuenio = async (body) => {
+  try {
+    const mailExistente = await userData.validarMail(body.mail);
+    if (mailExistente) {
+      throw new Error("El mail ya está registrado");
+    }
+    const duenio = new UsuarioDueño(body.nombre, body.mail);
+    const usuarioInsertado = await userData.insertarUsuarioDuenio(duenio);
+    return usuarioInsertado;
+  } catch (error) {
+    throw error;
+  }
+};*/
 const crearUsuarioDuenio = async (body) => {
-  const duenio = new UsuarioDueño(body.nombre);
-  const usuarioInsertado = await userData.insertarUsuarioDuenio(duenio);
-  return usuarioInsertado;
+  const mailExistente = await userData.validarMail(body.mail);
+  if (mailExistente) {
+    throw new Error("El mail ya está registrado");
+  }
+  try {
+    const duenio = new UsuarioDueño(body.nombre, body.mail);
+    const usuarioInsertado = await userData.insertarUsuarioDuenio(duenio);
+    return usuarioInsertado;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 async function getUsers(res) {

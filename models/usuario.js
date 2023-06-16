@@ -3,21 +3,22 @@ const { idGeneratorUsuario } = require("../utils/idGenerator.js");
 const usuarioGenerator = idGeneratorUsuario();
 
 class Usuario {
-  constructor(nombre) {
+  constructor(nombre, mail) {
     this.id = usuarioGenerator.next().value;
     this.nombre = nombre;
+    this.mail = mail;
   }
 }
 
 class UsuarioDueño extends Usuario {
-  constructor(nombre) {
-    super(nombre);
+  constructor(nombre, mail) {
+    super(nombre, mail);
   }
 }
 
 class UsuarioJugador extends Usuario {
-  constructor(nombre) {
-    super(nombre);
+  constructor(nombre, mail) {
+    super(nombre, mail);
     this.reservas = [];
   }
 

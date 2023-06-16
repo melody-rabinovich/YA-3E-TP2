@@ -39,8 +39,22 @@ const traerUsuarioId = async (id) => {
   }
 };
 
+const validarMail = async (mail) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("usuarios");
+
+  try {
+    const usuario = await collection.findOne({ mail: mail });
+    return usuario !== null; //Devuelve true si el usuario existe, false si no existe
+  } catch (error) {
+    console.log("Error al validar el correo electronico", error);
+    throw error;
+  }
+};
+
 module.exports = {
   insertarUsuarioDuenio,
   traerTodos,
   traerUsuarioId,
+  validarMail,
 };

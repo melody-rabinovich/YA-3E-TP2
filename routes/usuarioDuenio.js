@@ -8,11 +8,18 @@ router.post("/", async function (req, res, next) {
     return res.status(400).json({
       message: "No se inserto el nombre dentro de usuarioDuenio Routes",
     });
+  } else if (req.body.mail == undefined) {
+    return res.status(400).json({
+      message: "No se inserto el mail, intentelo nuevamente",
+    });
   }
   try {
     const response = await usuarioService.crearUsuarioDuenio(body);
     res.status(201).json({
-      message: body.nombre + " fue creado como duenio exitosamente",
+      message:
+        body.nombre +
+        " fue creado como usuario exitosamente con el mail " +
+        body.mail,
       response: response,
     });
   } catch (err) {

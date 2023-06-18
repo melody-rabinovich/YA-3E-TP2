@@ -1,6 +1,6 @@
 
-const Cancha = require("../models/cancha");
-const Reserva = require("../models/reserva");
+const { Cancha } = require("../models/cancha");
+const { Reserva } = require("../models/reserva");
 const canchaData = require("../data/canchaData");
 const usuarioData = require("../data/usuarioData");
 const reservaData = require("../data/reservaData");
@@ -54,11 +54,17 @@ async function crearReserva(fecha, hora, idUsuario, idCancha) {
   try {
     const reserva = new Reserva(tipoDate, hora, idUsuario, idCancha);
     const result = await reservaData.crearReserva(reserva);
-    await canchaData.registrarReserva(reserva);
-    await usuarioData.registrarReserva(reserva);
+    await canchaData.registrarReserva(reserva, result.insertedId);
+    await usuarioData.registrarReserva(reserva, result.insertedId);
+    return result;
   } catch (error) {
     console.log(error);
   }
 }
 
-module.exports = { crearCancha, getCanchas, getCanchaById, crearReserva };
+module.exports = {
+  crearCancha,
+  getCanchas,
+  getCanchaById,
+  crearReserva,
+};

@@ -1,5 +1,7 @@
+
 const ObjectId = require("mongodb").ObjectId;
 const { obtenerCliente } = require("../database");
+const reservaData = require("./reservaData.js");
 
 const getUsuarios = async () => {
   console.log("Estoy trayendo todos los usuarios");
@@ -69,18 +71,14 @@ const cambiarNombre = async (mail, nuevoNombre) => {
   }
 };
 
-const registrarReserva = async (reserva) => {
+const registrarReserva = async (reserva, insertedId) => {
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("usuarios");
 
   try {
-    console.log("Quiero registar una reserva en mi array de reservas.")
-
     const filter = { _id: new ObjectId(reserva.idUsuario) };
-    const update = { $push: { reservas: reserva } };
-    
+    const update = { $push: { reservas: insertedId } };
     const result = await collection.updateOne(filter, update);
-
     return result;
   } catch (error) {
     console.log("Error al generar la reserva", error);

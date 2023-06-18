@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 const canchaService = require("../services/canchaService.js");
@@ -71,11 +72,10 @@ router.get("/:id/reservar", async function (req, res, next) {
 });
 
 router.put("/:id/reservar", async function (req, res, next) {
-  console.log("Paso los datos para reservar")
   try {
     const response = await canchaService.crearReserva(req.body.fecha, req.body.hora, req.body.idUsuario, req.params.id);
     res.status(201).json({
-      message: "La reserva en la cancha número " + req.body.numero + ", para el día " + req.body.fecha + " a las " + req.body.hora + " fue creada exitosamente",
+      message: "La reserva en la cancha número " + req.params.id + ", para el día " + req.body.fecha + " a las " + req.body.hora + " hs. fue creada exitosamente.",
       response: response,
     });
   } catch (err) {

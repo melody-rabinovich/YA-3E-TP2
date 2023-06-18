@@ -67,4 +67,42 @@ jugador1.listarReservas();
 console.log();
 cancha.eliminarReserva(0,0,2000,jugador1);
 console.log();
-jugador1.listarReservas();*/
+jugador1.listarReservas();
+
+const req = {
+  "fecha": "2023/01/30 00:00:00",
+  "hora": "10",
+  "idUsuario": "648e3e58f44a1a57cf931d60"
+}
+const tipoDate = new Date(req.fecha);
+
+const mes = tipoDate.getMonth();
+const dia = tipoDate.getDate();
+
+console.log(req)
+console.log()
+console.log(tipoDate)
+console.log()
+console.log(mes)
+console.log(dia)
+console.log()
+
+const req2 = {
+  "fecha": "2023/01/01 00:00:00",
+  "hora": "10",
+  "idUsuario": "648e3e58f44a1a57cf931d60"
+}
+const tipoDate2 = new Date(req2.fecha);
+
+const mes2 = tipoDate2.getMonth();
+const dia2 = tipoDate2.getDate();
+
+console.log(req2)
+console.log()
+console.log(tipoDate2)
+console.log()
+console.log(mes2)
+console.log(dia2)
+console.log()
+*/
+

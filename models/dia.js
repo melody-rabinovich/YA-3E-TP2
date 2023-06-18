@@ -5,4 +5,6 @@ class Dia {
   }
 }
 
-module.exports = Dia;
+module.exports = {
+  Dia
+};

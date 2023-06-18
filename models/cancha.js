@@ -1,4 +1,5 @@
-const Dia = require("./dia");
+
+const { Dia } = require("./dia");
 
 class Cancha {
   constructor(numero, nombre, tamanio, precio) {
@@ -12,19 +13,20 @@ class Cancha {
   setCalendario2023() {
     const calendario = [];
 
-//  for (let i = 0; i < 12; i++) {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 12; i++) {
       const mes = new Date(2023, i, 1);
       const dias = [];
       while (mes.getMonth() === i) {
-        //        dias.push(new Dia());
-        dias.push({"fecha": mes.getDate(), "reservas": []}); //Se guardan los IDs de las reservas
+        dias.push(new Dia());
+//        dias.push({"fecha": mes.getDate(), "reservas": []});
         mes.setDate(mes.getDate() + 1);
       }
-      calendario.push({"Mes": i, "Días": dias});
+      calendario.push(dias); //Se guardan los IDs de las reservas
     }
     return calendario;
   }
 }
 
-module.exports = Cancha;
+module.exports = {
+  Cancha
+};

@@ -1,3 +1,4 @@
+
 const { Usuario } = require("../models/usuario.js");
 const usuarioData = require("../data/usuarioData.js");
 

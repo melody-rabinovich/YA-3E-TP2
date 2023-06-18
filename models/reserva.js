@@ -22,4 +22,6 @@ class Reserva {
   }
 }
 
-module.exports = Reserva;
+module.exports = {
+  Reserva
+};

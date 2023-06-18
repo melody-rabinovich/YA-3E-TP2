@@ -5,7 +5,7 @@ const canchaData = require("../data/canchaData");
 const usuarioData = require("../data/usuarioData");
 const reservaData = require("../data/reservaData");
 
-async function getCanchas(res) {
+async function getCanchas() {
   try {
     const canchas = await canchaData.getCanchas();
     return canchas;
@@ -25,13 +25,11 @@ async function getCanchaById(id) {
   }
 }
 
-const crearCancha = async (body) => {
-  const cancha = new Cancha(
-    body.numero,
-    body.nombre,
-    body.tamanio,
-    body.precio,
-  );
+const crearCancha = async (numero, nombre, tamanio, precio) => {
+
+  //validarnumero
+
+  const cancha = new Cancha(numero, nombre, tamanio, precio);
 
   const canchaInsertada = await canchaData.insertarCancha(cancha);
 
@@ -79,10 +77,21 @@ async function crearReserva(fecha, hora, idUsuario, idCancha) {
   }
 }
 
+async function cancelarReserva(idReserva) {
+  try {
+    const result = reservaData.cancelarReserva(idReserva);
+    return result;
+  } catch (error) {
+    console.log(`Error al cancelar la reserva`, error);
+    throw error;
+  }
+}
+
 module.exports = {
   crearCancha,
   getCanchas,
   getCanchaById,
   getDisponibilidadPorDia,
   crearReserva,
+  cancelarReserva,
 };

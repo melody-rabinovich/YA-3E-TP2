@@ -1,6 +1,8 @@
 
+const ObjectId = require("mongodb").ObjectId;
 const { Usuario } = require("../models/usuario.js");
 const usuarioData = require("../data/usuarioData.js");
+const canchaService = require("../services/canchaService");
 
 async function getUsuarios() {
   try {
@@ -22,13 +24,13 @@ async function getUsuarioById(id) {
   }
 }
 
-const crearUsuario = async (body) => {
-  const mailExistente = await usuarioData.validarMail(body.mail);
+const crearUsuario = async (nombre, mail, password) => {
+  const mailExistente = await usuarioData.validarMail(mail);
   if (mailExistente) {
     throw new Error("El mail ya está registrado");
   }
   try {
-    const usuario = new Usuario(body.nombre, body.mail, body.password);
+    const usuario = new Usuario(nombre, mail, password);
     const usuarioInsertado = await usuarioData.insertarUsuario(usuario);
     return usuarioInsertado;
   } catch (error) {
@@ -60,30 +62,31 @@ const getMisReservas = async (idUsuario) => {
   }
 }
 
+const cancelarReserva = async (idUsuario, idReserva) => {
+  const usuario = await usuarioData.getUsuarioById(idUsuario);
+  if (!usuario) {
+    throw new Error("El usuario no existe.");
+  }
+
+  const existeReserva = usuario.reservas.find(id => id == idReserva);
+  if (!existeReserva) {
+    throw new Error("El usuario no es titular de la reserva, por lo que no puede cancelarla.");
+  }
+
+  try {
+    const result = await canchaService.cancelarReserva(idReserva);
+    return result;
+  } catch (error) {
+    console.log(`Error al cancelar la reserva del usuario con id: ${idUsuario}`, error);
+    throw error;
+  }
+}
+
 module.exports = {
   crearUsuario,
   getUsuarios,
   getUsuarioById,
   cambiarNombre,
   getMisReservas,
+  cancelarReserva,
 };
-
-/*const crearUsuarioJugador = async (req, res) => {
-  const { nombre } = req.body;
-  const jugador = new UsuarioJugador(nombre);
-  res.status(201).json({ jugador });
-};*/
-
-/*const crearUsuarioDuenio = async (body) => {
-  try {
-    const mailExistente = await userData.validarMail(body.mail);
-    if (mailExistente) {
-      throw new Error("El mail ya está registrado");
-    }
-    const duenio = new UsuarioDueño(body.nombre, body.mail);
-    const usuarioInsertado = await userData.insertarUsuarioDuenio(duenio);
-    return usuarioInsertado;
-  } catch (error) {
-    throw error;
-  }
-};*/

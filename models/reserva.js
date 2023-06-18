@@ -23,5 +23,6 @@ class Reserva {
 }
 
 module.exports = {
-  Reserva
+  Reserva,
+  EstadoReserva,
 };

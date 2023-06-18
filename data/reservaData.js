@@ -1,5 +1,6 @@
 
 const ObjectId = require("mongodb").ObjectId;
+const { EstadoReserva } = require("../models/reserva.js");
 const { obtenerCliente } = require("../database");
 const usuarioData = require("./usuarioData.js");
 
@@ -24,9 +25,8 @@ const getReservaById = async (id) => {
   const collection = cliente.db("mydatabase").collection("reservas");
 
   try {
-    const cancha = await collection.findOne({ _id: new ObjectId(id) });
-    //cancha.calendario2023 = cancha.calendario2023.filter(reserva => reserva.id != horario.reserva.id);
-    return cancha;
+    const reserva = await collection.findOne({ _id: new ObjectId(id) });
+    return reserva;
   } catch (error) {
     console.log("Error al traer a la reserva", error);
   }
@@ -45,8 +45,28 @@ const crearReserva = async (reserva) => {
   }
 };
 
+const cancelarReserva = async (idReserva) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("reservas");
+
+  const reserva = await getReservaById(idReserva);
+  if (reserva.estado == EstadoReserva.Cancelada) {
+    throw new Error("Error: la reserva ya está cancelada.");
+  }
+
+  try {
+    const filter = { _id: new ObjectId(reserva._id) };
+    const update = { $set: { estado: EstadoReserva.Cancelada } };
+    const result = await collection.updateOne(filter, update);
+    return result;
+  } catch (error) {
+    console.log("Error al cambiar el estado de la reserva", error);
+  }
+}
+
 module.exports = {
   getReservas,
   getReservaById,
-  crearReserva
+  crearReserva,
+  cancelarReserva,
 };

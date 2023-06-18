@@ -55,7 +55,7 @@ router.post("/", async function (req, res, next) {
   }
 
   try {
-    const response = await canchaService.crearCancha(req.body);
+    const response = await canchaService.crearCancha(req.body.numero, req.body.nombre, req.body.tamanio, req.body.precio);
     res.status(201).json({
       message: "La cancha número " + req.body.numero + " fue creada exitosamente",
       response: response,

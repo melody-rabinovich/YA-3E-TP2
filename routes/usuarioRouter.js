@@ -41,7 +41,7 @@ router.post("/register", async function (req, res) {
     });
   }
   try {
-    const response = await usuarioService.crearUsuario(req.body);
+    const response = await usuarioService.crearUsuario(req.body.nombre, req.body.mail, req.body.password);
     res.status(201).json({
       message:
         "El usuario " + req.body.nombre +
@@ -86,6 +86,21 @@ router.get("/:id/MisReservas", async function (req, res, next) {
     res
       .status(400)
       .json({ mensaje: "Soy el catch del usuarioRouter, y no pude obtener las reservas", err: err.message });
+  }
+});
+
+router.delete("/:id/MisReservas", async function (req, res, next) {
+  try {
+    const response = await usuarioService.cancelarReserva(req.params.id, req.body.idReserva);
+    res.status(201).json({
+      message:
+        "Se canceló la reserva",
+      response: response,
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ mensaje: "Soy el catch del usuarioRouter, y no pude cancelar la reserva", err: err.message });
   }
 });
 

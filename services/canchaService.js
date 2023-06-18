@@ -38,6 +38,11 @@ const crearCancha = async (body) => {
   return canchaInsertada;
 };
 
+async function getDisponibilidadPorDia(idCancha, mes, dia) {
+  const disponibilidad = await canchaData.getDisponibilidadPorDia(idCancha, mes, dia);
+  return disponibilidad;
+}
+
 async function crearReserva(fecha, hora, idUsuario, idCancha) {
   const tipoDate = new Date(fecha);
 
@@ -50,7 +55,12 @@ async function crearReserva(fecha, hora, idUsuario, idCancha) {
   if (!usuario) {
     throw new Error("El usuario no existe.");
   }
-  
+
+  const estaOcupada = await canchaData.estaOcupada(tipoDate.getMonth(), tipoDate.getDate() - 1, hora, idCancha);
+  if (estaOcupada) {
+    throw new Error("La cancha está ocupada a esa hora.");
+  }
+
   try {
     const reserva = new Reserva(tipoDate, hora, idUsuario, idCancha);
     const result = await reservaData.crearReserva(reserva);
@@ -66,5 +76,6 @@ module.exports = {
   crearCancha,
   getCanchas,
   getCanchaById,
+  getDisponibilidadPorDia,
   crearReserva,
 };

@@ -68,7 +68,17 @@ router.post("/", async function (req, res, next) {
 });
 
 router.get("/:id/reservar", async function (req, res, next) {
-  console.log("Quiero ver los horarios disponibles")
+  try {
+    const response = await canchaService.getDisponibilidadPorDia(req.body.idCancha, req.body.mes, req.body.dia)
+    res.status(200).json({
+      message: "La disponibilidad de la cancha número " + req.params.id + " para el día " + req.body.dia + " de " + req.body.mes + " es la siguiente:",
+      response: response,
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ mensaje: "Soy el catch del get canchaRouter reservar", err: err.message });
+  }
 });
 
 router.put("/:id/reservar", async function (req, res, next) {

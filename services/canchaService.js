@@ -39,12 +39,19 @@ const crearCancha = async (body) => {
 };
 
 async function getDisponibilidadPorDia(idCancha, mes, dia) {
-  const disponibilidad = await canchaData.getDisponibilidadPorDia(idCancha, mes, dia);
+  const cancha = await canchaData.getCanchaById(idCancha);
+  if (!cancha) {
+    throw new Error("La cancha no existe.");
+  }
+
+  const disponibilidad = await canchaData.getDisponibilidadPorDia(cancha, mes, dia);
   return disponibilidad;
 }
 
 async function crearReserva(fecha, hora, idUsuario, idCancha) {
   const tipoDate = new Date(fecha);
+  const mes = tipoDate.getMonth();
+  const dia = tipoDate.getDate() - 1;
 
   const cancha = await canchaData.getCanchaById(idCancha);
   if (!cancha) {
@@ -56,7 +63,7 @@ async function crearReserva(fecha, hora, idUsuario, idCancha) {
     throw new Error("El usuario no existe.");
   }
 
-  const estaOcupada = await canchaData.estaOcupada(tipoDate.getMonth(), tipoDate.getDate() - 1, hora, idCancha);
+  const estaOcupada = await canchaData.estaOcupada(mes, dia, hora, cancha);
   if (estaOcupada) {
     throw new Error("La cancha está ocupada a esa hora.");
   }

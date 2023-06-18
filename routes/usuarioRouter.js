@@ -73,4 +73,20 @@ router.put("/:id/cambiarnombre", async function (req, res, next) {
   }
 });
 
+router.get("/:id/MisReservas", async function (req, res, next) {
+  try {
+    const response = await usuarioService.getMisReservas(req.params.id);
+    res.status(201).json({
+      message:
+        "Estas son las reservas del usuario con mail " +
+        req.body.mail,
+      response: response,
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ mensaje: "Soy el catch del usuarioRouter, y no pude obtener las reservas", err: err.message });
+  }
+});
+
 module.exports = router;

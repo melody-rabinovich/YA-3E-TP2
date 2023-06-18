@@ -45,11 +45,27 @@ const cambiarNombre = async (mail, nombre) => {
   }
 };
 
+const getMisReservas = async (idUsuario) => {
+  const usuario = await usuarioData.getUsuarioById(idUsuario);
+  if (!usuario) {
+    throw new Error("El usuario no existe.");
+  }
+
+  try {
+    const reservas = await usuarioData.getMisReservas(usuario);
+    return reservas;
+  } catch (error) {
+    console.log(`Error al obtener las reservas del usuario con id: ${idUsuario}`, error);
+    throw error;
+  }
+}
+
 module.exports = {
   crearUsuario,
   getUsuarios,
   getUsuarioById,
   cambiarNombre,
+  getMisReservas,
 };
 
 /*const crearUsuarioJugador = async (req, res) => {

@@ -85,6 +85,22 @@ const registrarReserva = async (reserva, insertedId) => {
   }
 }
 
+const getMisReservas = async (usuario) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("reservas");
+  let reservas = [];
+
+  try {
+    for (let i = 0; i < usuario.reservas.length; i++){
+      let reserva = await collection.findOne({ _id: usuario.reservas[i] })
+      reservas.push(reserva);
+    }
+    return reservas;
+  } catch (error) {
+    console.log("Error al traer las reservas del usuario", error);
+  }
+};
+
 module.exports = {
   insertarUsuario,
   getUsuarios,
@@ -92,4 +108,5 @@ module.exports = {
   validarMail,
   cambiarNombre,
   registrarReserva,
+  getMisReservas,
 };

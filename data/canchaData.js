@@ -44,16 +44,10 @@ const insertarCancha = async (cancha) => {
   }
 };
 
-const getDisponibilidadPorDia = async (idCancha, mes, dia) => {
+const getDisponibilidadPorDia = async (cancha, mes, dia) => {
   let disponibilidad = [];
   for(let i = 0; i < 24; i++){
     disponibilidad.push(i);
-  }
-
-  const cancha = await getCanchaById(idCancha);
-  
-  if (!cancha) {
-    throw new Error("La cancha no existe.");
   }
 
   try{
@@ -67,16 +61,39 @@ const getDisponibilidadPorDia = async (idCancha, mes, dia) => {
   }
 };
 
-const estaOcupada = async (mes, dia, hora, idCancha) => {
+const getMisReservasPorDia = async (mes, dia, cancha) => {
   const cliente = obtenerCliente();
-  const collection = cliente.db("mydatabase").collection("canchas");
+  const collection = cliente.db("mydatabase").collection("reservas");
+  let reservas = [];
 
   try {
-    const cancha = await collection.findOne({ numero: idCancha });
-    const horaEncontrada = cancha.calendario2023[mes][dia].reservas.find(h => h == hora);
-    return horaEncontrada !== null; //Devuelve true si el usuario existe, false si no existe
+    for (let i = 0; i < cancha.calendario2023[mes][dia].reservas.length; i++){
+      let reserva = await collection.findOne({ _id: cancha.calendario2023[mes][dia].reservas[i] })
+      reservas.push(reserva);
+    }
+    return reservas;
   } catch (error) {
-    console.log("Error al validar el correo electronico", error);
+    console.log("Error al traer las reservas de la cancha", error);
+  }
+};
+
+const estaOcupada = async (mes, dia, hora, cancha) => {
+  const reservas = await getMisReservasPorDia(mes, dia, cancha);
+
+  try {
+    let reservaEncontrada = null;
+    let i = 0;
+
+    while (reservaEncontrada == null && i < reservas.length){
+      if(reservas[i].hora == hora){
+        reservaEncontrada = reservas[i];
+      }
+      i++;
+    }
+
+    return reservaEncontrada !== null; //Devuelve true si el usuario existe, false si no existe
+  } catch (error) {
+    console.log("Error al validar si la cancha está ocupada", error);
     throw error;
   }
 };
@@ -103,6 +120,7 @@ module.exports = {
   getCanchaById,
   insertarCancha,
   getDisponibilidadPorDia,
+  getMisReservasPorDia,
   estaOcupada,
   registrarReserva,
 };

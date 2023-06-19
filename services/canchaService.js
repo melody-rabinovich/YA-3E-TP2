@@ -10,7 +10,7 @@ async function getCanchas() {
     const canchas = await canchaData.getCanchas();
     return canchas;
   } catch (error) {
-    console.log("Error al obtener las canchas", error);
+    console.log("Error al obtener las canchas.", error);
     throw error;
   }
 }
@@ -20,7 +20,7 @@ async function getCanchaById(id) {
     const cancha = await canchaData.getCanchaById(id);
     return cancha;
   } catch (error) {
-    console.log(`Error al obtener la cancha con id: ${id}`, error);
+    console.log(`Error al obtener la cancha con id: ${id}.`, error);
     throw error;
   }
 }
@@ -28,7 +28,7 @@ async function getCanchaById(id) {
 async function crearCancha(numero, nombre, tamanio, precio) {
   const numeroExistente = await canchaData.validarNumero(numero);
   if (numeroExistente) {
-    throw new Error("El número ya está registrado");
+    throw new Error("El número ya está registrado.");
   }
   try {
     const cancha = new Cancha(numero, nombre, tamanio, precio);
@@ -91,7 +91,7 @@ async function getMisReservas(idCancha) {
     const reservas = await canchaData.getMisReservas(cancha);
     return reservas;
   } catch (error) {
-    console.log(`Error al obtener las reservas de la cancha número ${idCancha}`, error);
+    console.log(`Error al obtener las reservas de la cancha número ${idCancha}.`, error);
     throw error;
   }
 }

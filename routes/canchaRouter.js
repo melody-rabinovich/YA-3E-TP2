@@ -8,7 +8,7 @@ router.get("/", async function (req, res, next) {
     const canchas = await canchaService.getCanchas();
     res.json(canchas);
   } catch (error) {
-    console.log("Error al obtener la lista de canchas", error);
+    console.log("Error al obtener la lista de canchas.", error);
     res
       .status(500)
       .json({ error: "Ocurrió un error al obtener la lista de canchas." });
@@ -32,38 +32,38 @@ router.post("/", async function (req, res, next) {
 
   if (req.body.numero == undefined) {
     return res.status(400).json({
-      message: "No se insertó el numero dentro de canchaRouter",
+      message: "No se insertó el numero, inténtelo nuevamente.",
     });
   }
 
   if (req.body.nombre == undefined) {
     return res.status(400).json({
-      message: "No se insertó el nombre dentro de canchaRouter",
+      message: "No se insertó el nombre, inténtelo nuevamente.",
     });
   }
 
   if (req.body.tamanio == undefined) {
     return res.status(400).json({
-      message: "No se insertó el tamaño dentro de canchaRouter",
+      message: "No se insertó el tamaño, inténtelo nuevamente.",
     });
   }
 
   if (req.body.precio == undefined) {
     return res.status(400).json({
-      message: "No se insertó el precio dentro de canchaRouter",
+      message: "No se insertó el precio, inténtelo nuevamente.",
     });
   }
 
   try {
     const response = await canchaService.crearCancha(req.body.numero, req.body.nombre, req.body.tamanio, req.body.precio);
     res.status(201).json({
-      message: "La cancha número " + req.body.numero + " fue creada exitosamente",
+      message: "La cancha número " + req.body.numero + " fue creada exitosamente.",
       response: response,
     });
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del post en canchaRouter", err: err.message });
+      .json({ mensaje: "Ocurrió un error al registrar la cancha.", err: err.message });
   }
 });
 
@@ -77,7 +77,7 @@ router.get("/:id/reservar", async function (req, res, next) {
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del get canchaRouter reservar", err: err.message });
+      .json({ mensaje: "Ocurrió un error al consultar las reservas.", err: err.message });
   }
 });
 
@@ -91,7 +91,7 @@ router.put("/:id/reservar", async function (req, res, next) {
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del put canchaRouter reservar", err: err.message });
+      .json({ mensaje: "Ocurrió un error al crear la reserva.", err: err.message });
   }
 });
 
@@ -101,13 +101,13 @@ router.get("/:id/MisReservas", async function (req, res, next) {
     res.status(201).json({
       message:
         "Estas son las reservas de la cancha número " +
-        req.params.id,
+        req.params.id + ":",
       response: response,
     });
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del canchaRouter, y no pude obtener las reservas", err: err.message });
+      .json({ mensaje: "Ocurrió un error al obtener las reservas.", err: err.message });
   }
 });
 
@@ -116,13 +116,13 @@ router.delete("/:id/MisReservas", async function (req, res, next) {
     const response = await canchaService.cancelarReserva(req.body.fecha, req.params.id, req.body.idReserva);
     res.status(201).json({
       message:
-        "Se canceló la reserva",
+        "Se canceló la reserva.",
       response: response,
     });
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del canchaRouter, y no pude cancelar la reserva", err: err.message });
+      .json({ mensaje: "Ocurrió un error al cancelar la reserva.", err: err.message });
   }
 });
 

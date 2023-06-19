@@ -4,7 +4,7 @@ const { obtenerCliente } = require("../database");
 const reservaData = require("./reservaData.js");
 
 const getUsuarios = async () => {
-  console.log("Estoy trayendo todos los usuarios");
+  console.log("Estoy trayendo todos los usuarios.");
 
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("usuarios");
@@ -13,7 +13,7 @@ const getUsuarios = async () => {
     const documentos = await collection.find({}).toArray();
     return documentos;
   } catch (error) {
-    console.log("Error al traer a los usuarios", error);
+    console.log("Error al traer a los usuarios.", error);
   }
 };
 
@@ -25,7 +25,7 @@ const getUsuarioById = async (id) => {
     const usuario = await collection.findOne({ _id: new ObjectId(id) });
     return usuario;
   } catch (error) {
-    console.log("Error al traer al usuario", error);
+    console.log("Error al traer al usuario.", error);
   }
 };
 
@@ -35,9 +35,9 @@ const insertarUsuario = async (usuario) => {
 
   try {
     const result = await collection.insertOne(usuario);
-    console.log("Usuario insertado con éxito: ", result.insertedId);
+    return result;
   } catch (error) {
-    console.error("Error al insertar al usuario", error);
+    console.error("Error al insertar al usuario.", error);
     throw error;
   }
 };
@@ -50,7 +50,7 @@ const validarMail = async (mail) => {
     const usuario = await collection.findOne({ mail: mail });
     return usuario != null; //Devuelve true si el mail está registrado, false si no lo está
   } catch (error) {
-    console.log("Error al validar el correo electronico", error);
+    console.log("Error al validar el correo electrónico.", error);
     throw error;
   }
 };
@@ -68,7 +68,7 @@ const cambiarNombre = async (mail, nuevoNombre) => {
       }
     )
   } catch (error) {
-    console.log("Error al cambiar el nombre", error);
+    console.log("Error al cambiar el nombre.", error);
   }
 };
 
@@ -82,7 +82,7 @@ const registrarReserva = async (reserva, insertedId) => {
     const result = await collection.updateOne(filter, update);
     return result;
   } catch (error) {
-    console.log("Error al generar la reserva", error);
+    console.log("Error al generar la reserva.", error);
   }
 }
 
@@ -98,7 +98,7 @@ const getMisReservas = async (usuario) => {
     }
     return reservas;
   } catch (error) {
-    console.log("Error al traer las reservas del usuario", error);
+    console.log("Error al traer las reservas del usuario.", error);
   }
 };
 

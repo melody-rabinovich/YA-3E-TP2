@@ -15,9 +15,9 @@ const getCanchas = async () => {
     const documentos = await collection.find({}).toArray();
     return documentos;
   } catch (error) {
-    console.log("Error al traer a las canchas", error);
+    console.log("Error al traer a las canchas.", error);
 
-    res.status(500).json({ error: "Ocurrio un error al obtener las canchas." });
+    res.status(500).json({ error: "Ocurrió un error al obtener las canchas." });
   }
 };
 
@@ -41,7 +41,7 @@ const insertarCancha = async (cancha) => {
     const result = await collection.insertOne(cancha);
     return result;
   } catch (error) {
-    console.error("Error al insertar la cancha", error);
+    console.error("Error al insertar la cancha.", error);
   }
 };
 
@@ -53,7 +53,7 @@ const validarNumero = async (numero) => {
     const cancha = await collection.findOne({ numero: numero });
     return cancha != null; //Devuelve true si el número está registrado, false si no lo está
   } catch (error) {
-    console.log("Error al validar el correo electronico", error);
+    console.log("Error al validar el número de la cancha.", error);
     throw error;
   }
 };
@@ -99,7 +99,7 @@ const getMisReservasPorDia = async (mes, dia, cancha) => {
     }
     return reservas;
   } catch (error) {
-    console.log("Error al traer las reservas de la cancha", error);
+    console.log("Error al traer las reservas de la cancha.", error);
   }
 };
 
@@ -120,7 +120,7 @@ const estaOcupada = async (mes, dia, hora, cancha) => {
     let reservaEncontrada = await reservas.find(r => r.hora == hora && r.estado == EstadoReserva.Activa);
     return reservaEncontrada != null; //Devuelve true si la reserva existe, false si no existe
   } catch (error) {
-    console.log("Error al validar si la cancha está ocupada", error);
+    console.log("Error al validar si la cancha está ocupada.", error);
     throw error;
   }
 };
@@ -138,7 +138,7 @@ const registrarReserva = async (reserva, insertedId) => {
     const result = await collection.updateOne(filter, update);
     return result;
   } catch (error) {
-    console.log("Error al generar la reserva", error);
+    console.log("Error al generar la reserva.", error);
   }
 };
 
@@ -147,7 +147,7 @@ const tieneEstaReserva = async (mes, dia, cancha, idReserva) => {
     let reservaEncontrada = await cancha.calendario2023[mes][dia].reservas.find(r_id => r_id == idReserva);
     return reservaEncontrada != null; //Devuelve true si la reserva existe, false si no existe
   } catch (error) {
-    console.log("Error al averiguar si la cancha " + cancha.numero + " tiene la reserva " + idReserva, error);
+    console.log("Error al averiguar si la cancha " + cancha.numero + " tiene la reserva " + idReserva + ".", error);
     throw error;
   }
 };
@@ -164,7 +164,7 @@ const getMisReservas = async (cancha) => {
     }
     return reservas;
   } catch (error) {
-    console.log("Error al traer las reservas del usuario", error);
+    console.log("Error al traer las reservas del usuario.", error);
   }
 };
 

@@ -5,7 +5,7 @@ const { obtenerCliente } = require("../database");
 const usuarioData = require("./usuarioData.js");
 
 const getReservas = async () => {
-  console.log("Estoy trayendo todas las reservas");
+  console.log("Estoy trayendo todas las reservas.");
 
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("reservas");
@@ -14,9 +14,9 @@ const getReservas = async () => {
     const documentos = await collection.find({}).toArray();
     return documentos;
   } catch (error) {
-    console.log("Error al traer a las reservas", error);
+    console.log("Error al traer a las reservas.", error);
 
-    res.status(500).json({ error: "Ocurrio un error al obtener las reservas" });
+    res.status(500).json({ error: "Ocurrió un error al obtener las reservas." });
   }
 };
 
@@ -28,7 +28,7 @@ const getReservaById = async (id) => {
     const reserva = await collection.findOne({ _id: new ObjectId(id) });
     return reserva;
   } catch (error) {
-    console.log("Error al traer a la reserva", error);
+    console.log("Error al traer a la reserva.", error);
   }
 };
 
@@ -38,10 +38,9 @@ const crearReserva = async (reserva) => {
 
   try {
     const result = await collection.insertOne(reserva);
-    console.log("Reserva insertada con éxito: ", result.insertedId);
     return result;
   } catch (error) {
-    console.error("Error al insertar la reserva", error);
+    console.error("Error al insertar la reserva.", error);
   }
 };
 
@@ -60,7 +59,7 @@ const cancelarReserva = async (idReserva) => {
     const result = await collection.updateOne(filter, update);
     return result;
   } catch (error) {
-    console.log("Error al cambiar el estado de la reserva", error);
+    console.log("Error al cambiar el estado de la reserva.", error);
     throw error;
   }
 }

@@ -8,8 +8,8 @@ router.get("/", async function (req, res) {
     const usuarios = await usuarioService.getUsuarios();
     res.json(usuarios);
   } catch (error) {
-    console.log("Error al obtener los usuarios", error);
-    res.status(500).json({ error: "Ocurrió un error al obtener los usuarios" });
+    console.log("Error al obtener los usuarios.", error);
+    res.status(500).json({ error: "Ocurrió un error al obtener los usuarios." });
   }
 });
 
@@ -29,15 +29,15 @@ router.get("/:id", async function (req, res, next) {
 router.post("/register", async function (req, res) {
   if (req.body.nombre == undefined) {
     return res.status(400).json({
-      message: "No se insertó el nombre dentro de usuarioRouter",
+      message: "No se insertó el nombre, inténtelo nuevamente.",
     });
   } else if (req.body.mail == undefined) {
     return res.status(400).json({
-      message: "No se insertó el mail, intentelo nuevamente",
+      message: "No se insertó el mail, inténtelo nuevamente.",
     });
   } else if (req.body.password == undefined) {
     return res.status(400).json({
-      message: "No se insertó la contraseña, intentelo nuevamente",
+      message: "No se insertó la contraseña, inténtelo nuevamente.",
     });
   }
   try {
@@ -46,13 +46,13 @@ router.post("/register", async function (req, res) {
       message:
         "El usuario " + req.body.nombre +
         " fue creado como usuario exitosamente con el mail " +
-        req.body.mail,
+        req.body.mail + ".",
       response: response,
     });
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del usuarioRouter", err: err.message });
+      .json({ mensaje: "Ocurrió un error al registar al usuario.", err: err.message });
   }
 });
 
@@ -63,13 +63,13 @@ router.put("/:id/cambiarnombre", async function (req, res, next) {
       message:
         "Se cambió el nombre a " + req.body.nombre +
         " del usuario con mail " +
-        req.body.mail,
+        req.body.mail + ".",
       response: response,
     });
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del usuarioRouter, y no pude cambiar el nombre", err: err.message });
+      .json({ mensaje: "Ocurrió un error al cambiar el nombre del usuario.", err: err.message });
   }
 });
 
@@ -79,13 +79,13 @@ router.get("/:id/MisReservas", async function (req, res, next) {
     res.status(201).json({
       message:
         "Estas son las reservas del usuario con mail " +
-        req.body.mail,
+        req.body.mail + ".",
       response: response,
     });
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del usuarioRouter, y no pude obtener las reservas", err: err.message });
+      .json({ mensaje: "Ocurrió un error al obtener las reservas.", err: err.message });
   }
 });
 
@@ -94,13 +94,13 @@ router.delete("/:id/MisReservas", async function (req, res, next) {
     const response = await usuarioService.cancelarReserva(req.params.id, req.body.idReserva);
     res.status(201).json({
       message:
-        "Se canceló la reserva",
+        "Se canceló la reserva.",
       response: response,
     });
   } catch (err) {
     res
       .status(400)
-      .json({ mensaje: "Soy el catch del usuarioRouter, y no pude cancelar la reserva", err: err.message });
+      .json({ mensaje: "Ocurrió un error al cancelar la reserva.", err: err.message });
   }
 });
 

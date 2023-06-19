@@ -9,7 +9,7 @@ async function getUsuarios() {
     const usuarios = await usuarioData.getUsuarios();
     return usuarios;
   } catch (error) {
-    console.log("Error al obtener los usuarios", error);
+    console.log("Error al obtener los usuarios.", error);
     throw error;
   }
 }
@@ -19,7 +19,7 @@ async function getUsuarioById(id) {
     const usuario = await usuarioData.getUsuarioById(id);
     return usuario;
   } catch (error) {
-    console.log(`Error al obtener el usuario con id: ${id}`, error);
+    console.log(`Error al obtener el usuario con id: ${id}.`, error);
     throw error;
   }
 }
@@ -27,7 +27,7 @@ async function getUsuarioById(id) {
 async function crearUsuario(nombre, mail, password) {
   const mailExistente = await usuarioData.validarMail(mail);
   if (mailExistente) {
-    throw new Error("El mail ya está registrado");
+    throw new Error("El mail ya está registrado.");
   }
   try {
     const usuario = new Usuario(nombre, mail, password);
@@ -57,7 +57,7 @@ async function getMisReservas(idUsuario) {
     const reservas = await usuarioData.getMisReservas(usuario);
     return reservas;
   } catch (error) {
-    console.log(`Error al obtener las reservas del usuario de id ${idUsuario}`, error);
+    console.log(`Error al obtener las reservas del usuario de id ${idUsuario}.`, error);
     throw error;
   }
 }

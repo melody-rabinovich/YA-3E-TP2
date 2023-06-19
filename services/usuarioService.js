@@ -24,7 +24,7 @@ async function getUsuarioById(id) {
   }
 }
 
-const crearUsuario = async (nombre, mail, password) => {
+async function crearUsuario(nombre, mail, password) {
   const mailExistente = await usuarioData.validarMail(mail);
   if (mailExistente) {
     throw new Error("El mail ya está registrado");
@@ -34,20 +34,20 @@ const crearUsuario = async (nombre, mail, password) => {
     const usuarioInsertado = await usuarioData.insertarUsuario(usuario);
     return usuarioInsertado;
   } catch (error) {
+    throw error;
+  }
+};
+
+async function cambiarNombre(mail, nombre) {
+  try {
+    await usuarioData.cambiarNombre(mail, nombre)
+  } catch (error) {
     console.log(error);
     throw error;
   }
 };
 
-const cambiarNombre = async (mail, nombre) => {
-  try {
-    await usuarioData.cambiarNombre(mail, nombre)
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const getMisReservas = async (idUsuario) => {
+async function getMisReservas(idUsuario) {
   const usuario = await usuarioData.getUsuarioById(idUsuario);
   if (!usuario) {
     throw new Error("El usuario no existe.");
@@ -57,12 +57,12 @@ const getMisReservas = async (idUsuario) => {
     const reservas = await usuarioData.getMisReservas(usuario);
     return reservas;
   } catch (error) {
-    console.log(`Error al obtener las reservas del usuario con id: ${idUsuario}`, error);
+    console.log(`Error al obtener las reservas del usuario de id ${idUsuario}`, error);
     throw error;
   }
 }
 
-const cancelarReserva = async (idUsuario, idReserva) => {
+async function cancelarReserva(idUsuario, idReserva) {
   const usuario = await usuarioData.getUsuarioById(idUsuario);
   if (!usuario) {
     throw new Error("El usuario no existe.");
@@ -74,10 +74,9 @@ const cancelarReserva = async (idUsuario, idReserva) => {
   }
 
   try {
-    const result = await canchaService.cancelarReserva(idReserva);
+    const result = await canchaService.cancelarReservaConfirmed(idReserva);
     return result;
   } catch (error) {
-    console.log(`Error al cancelar la reserva del usuario con id: ${idUsuario}`, error);
     throw error;
   }
 }

@@ -24,10 +24,10 @@ app.use("/canchas", canchaRouter);
 //Conecto a la base de datos
 conectar()
   .then(() => {
-    console.log("Conectado a la base de datos");
   })
   .catch((error) => {
     console.error("Error al conectar a la base de datos", error);
+    throw error;
   });
 
 app.get("/", (req, res) => {
@@ -36,7 +36,7 @@ app.get("/", (req, res) => {
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}
- http://localhost:` + port + `/`);
+  http://localhost:` + port + `/`);
 });
 
 module.exports = app;

@@ -3,6 +3,7 @@ const ObjectId = require("mongodb").ObjectId;
 const { obtenerCliente } = require("../database");
 const reservaData = require("./reservaData.js");
 const { Cancha } = require("../models/cancha");
+const { EstadoReserva } = require("../models/reserva");
 
 const getCanchas = async () => {
   console.log("Estoy trayendo todas las canchas.");
@@ -44,16 +45,28 @@ const insertarCancha = async (cancha) => {
   }
 };
 
-const getDisponibilidadPorDia = async (cancha, mes, dia) => {
-  let disponibilidad = [];
-  for(let i = 0; i < 24; i++){
-    disponibilidad.push(i);
-  }
-
+const getDisponibilidadPorDia = async (mes, dia, cancha) => {
   try{
+//  Es bonito, prolijo, corto, legible, pero es MUY LENTO
+/*
+    let disponibilidad = [];
+    for(let i = 0; i < 24; i++){
+      if (!await estaOcupada(mes, dia, i, cancha)){
+        disponibilidad.push(i);
+      }
+    }
+*/
+//  De esta forma me pasa de 34 segundos y medio, a 1 segundo 1 y medio
+    let disponibilidad = [];
+    for(let i = 0; i < 24; i++){
+      disponibilidad.push(i);
+    }
+
     for(let i = 0; i < cancha.calendario2023[mes][dia].reservas.length; i++){
-      let horaReserva = (await reservaData.getReservaById(cancha.calendario2023[mes][dia].reservas[i])).hora;
-      disponibilidad = disponibilidad.filter(numero => numero != horaReserva);
+      let reserva = await reservaData.getReservaById(cancha.calendario2023[mes][dia].reservas[i]);
+      if (reserva.estado == EstadoReserva.Activa){
+        disponibilidad = disponibilidad.filter(numero => numero != reserva.hora);
+      }
     }
     return disponibilidad;
   } catch (error) {
@@ -81,17 +94,18 @@ const estaOcupada = async (mes, dia, hora, cancha) => {
   const reservas = await getMisReservasPorDia(mes, dia, cancha);
 
   try {
-    let reservaEncontrada = null;
+    /*
+    let reservaEncontrada2 = null;
     let i = 0;
-
-    while (reservaEncontrada == null && i < reservas.length){
+    while (reservaEncontrada2 == null && i < reservas.length){
       if(reservas[i].hora == hora){
-        reservaEncontrada = reservas[i];
+        reservaEncontrada2 = reservas[i];
       }
       i++;
     }
-
-    return reservaEncontrada !== null; //Devuelve true si el usuario existe, false si no existe
+    */
+    let reservaEncontrada = await reservas.find(r => r.hora == hora && r.estado == EstadoReserva.Activa);
+    return reservaEncontrada != null; //Devuelve true si la reserva existe, false si no existe
   } catch (error) {
     console.log("Error al validar si la cancha está ocupada", error);
     throw error;
@@ -115,6 +129,32 @@ const registrarReserva = async (reserva, insertedId) => {
   }
 };
 
+const tieneEstaReserva = async (mes, dia, cancha, idReserva) => {
+  try {
+    let reservaEncontrada = await cancha.calendario2023[mes][dia].reservas.find(r_id => r_id == idReserva);
+    return reservaEncontrada != null; //Devuelve true si la reserva existe, false si no existe
+  } catch (error) {
+    console.log("Error al averiguar si la cancha " + cancha.numero + " tiene la reserva " + idReserva, error);
+    throw error;
+  }
+};
+
+const getMisReservas = async (cancha) => {
+  let reservas = [];
+
+  try {
+    for (let mes = 0; mes < cancha.calendario2023.length; mes++){
+      for (let dia = 0; dia < cancha.calendario2023[mes].length; dia++){
+        let reservasDelDia = await getMisReservasPorDia(mes, dia, cancha);
+        reservas.push(...reservasDelDia);
+        }
+    }
+    return reservas;
+  } catch (error) {
+    console.log("Error al traer las reservas del usuario", error);
+  }
+};
+
 module.exports = {
   getCanchas,
   getCanchaById,
@@ -123,4 +163,6 @@ module.exports = {
   getMisReservasPorDia,
   estaOcupada,
   registrarReserva,
+  tieneEstaReserva,
+  getMisReservas,
 };

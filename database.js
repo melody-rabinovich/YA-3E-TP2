@@ -11,9 +11,9 @@ async function conectar() {
   try {
     cliente = new MongoClient(uri);
     await cliente.connect();
-    console.log("Conexión exitosa a MongoDB");
   } catch (error) {
     console.error("Error al conectar a MongoDB", error);
+    throw error;
   }
 }
 function obtenerCliente() {

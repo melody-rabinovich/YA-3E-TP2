@@ -69,7 +69,7 @@ router.post("/", async function (req, res, next) {
 
 router.get("/:id/reservar", async function (req, res, next) {
   try {
-    const response = await canchaService.getDisponibilidadPorDia(req.body.idCancha, req.body.mes, req.body.dia)
+    const response = await canchaService.getDisponibilidadPorDia(req.body.mes, req.body.dia, req.params.id)
     res.status(200).json({
       message: "La disponibilidad de la cancha número " + req.params.id + " para el día " + req.body.dia + " de " + req.body.mes + " es la siguiente:",
       response: response,
@@ -92,6 +92,37 @@ router.put("/:id/reservar", async function (req, res, next) {
     res
       .status(400)
       .json({ mensaje: "Soy el catch del put canchaRouter reservar", err: err.message });
+  }
+});
+
+router.get("/:id/MisReservas", async function (req, res, next) {
+  try {
+    const response = await canchaService.getMisReservas(req.params.id);
+    res.status(201).json({
+      message:
+        "Estas son las reservas de la cancha número " +
+        req.params.id,
+      response: response,
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ mensaje: "Soy el catch del canchaRouter, y no pude obtener las reservas", err: err.message });
+  }
+});
+
+router.delete("/:id/MisReservas", async function (req, res, next) {
+  try {
+    const response = await canchaService.cancelarReserva(req.body.fecha, req.params.id, req.body.idReserva);
+    res.status(201).json({
+      message:
+        "Se canceló la reserva",
+      response: response,
+    });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ mensaje: "Soy el catch del canchaRouter, y no pude cancelar la reserva", err: err.message });
   }
 });
 

@@ -61,6 +61,7 @@ const cancelarReserva = async (idReserva) => {
     return result;
   } catch (error) {
     console.log("Error al cambiar el estado de la reserva", error);
+    throw error;
   }
 }
 

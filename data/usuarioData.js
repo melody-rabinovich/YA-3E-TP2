@@ -38,6 +38,7 @@ const insertarUsuario = async (usuario) => {
     console.log("Usuario insertado con éxito: ", result.insertedId);
   } catch (error) {
     console.error("Error al insertar al usuario", error);
+    throw error;
   }
 };
 
@@ -47,7 +48,7 @@ const validarMail = async (mail) => {
 
   try {
     const usuario = await collection.findOne({ mail: mail });
-    return usuario !== null; //Devuelve true si el usuario existe, false si no existe
+    return usuario != null; //Devuelve true si el usuario existe, false si no existe
   } catch (error) {
     console.log("Error al validar el correo electronico", error);
     throw error;

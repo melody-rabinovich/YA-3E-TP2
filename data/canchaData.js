@@ -45,6 +45,19 @@ const insertarCancha = async (cancha) => {
   }
 };
 
+const validarNumero = async (numero) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("canchas");
+
+  try {
+    const cancha = await collection.findOne({ numero: numero });
+    return cancha != null; //Devuelve true si el número está registrado, false si no lo está
+  } catch (error) {
+    console.log("Error al validar el correo electronico", error);
+    throw error;
+  }
+};
+
 const getDisponibilidadPorDia = async (mes, dia, cancha) => {
   try{
 //  Es bonito, prolijo, corto, legible, pero es MUY LENTO
@@ -159,6 +172,7 @@ module.exports = {
   getCanchas,
   getCanchaById,
   insertarCancha,
+  validarNumero,
   getDisponibilidadPorDia,
   getMisReservasPorDia,
   estaOcupada,

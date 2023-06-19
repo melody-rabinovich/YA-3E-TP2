@@ -26,14 +26,18 @@ async function getCanchaById(id) {
 }
 
 async function crearCancha(numero, nombre, tamanio, precio) {
+  const numeroExistente = await canchaData.validarNumero(numero);
+  if (numeroExistente) {
+    throw new Error("El número ya está registrado");
+  }
+  try {
+    const cancha = new Cancha(numero, nombre, tamanio, precio);
+    const canchaInsertada = await canchaData.insertarCancha(cancha);  
+    return canchaInsertada;
+    } catch (error) {
+    throw error;
+  }
 
-  //validarnumero
-
-  const cancha = new Cancha(numero, nombre, tamanio, precio);
-
-  const canchaInsertada = await canchaData.insertarCancha(cancha);
-
-  return canchaInsertada;
 };
 
 async function getDisponibilidadPorDia(mes, dia, idCancha) {

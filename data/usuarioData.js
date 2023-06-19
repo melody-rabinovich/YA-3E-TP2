@@ -48,7 +48,7 @@ const validarMail = async (mail) => {
 
   try {
     const usuario = await collection.findOne({ mail: mail });
-    return usuario != null; //Devuelve true si el usuario existe, false si no existe
+    return usuario != null; //Devuelve true si el mail está registrado, false si no lo está
   } catch (error) {
     console.log("Error al validar el correo electronico", error);
     throw error;

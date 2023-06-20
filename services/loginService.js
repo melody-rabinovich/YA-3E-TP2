@@ -42,7 +42,7 @@ async function validarToken(req){
 
 async function decodificarToken(token) {
   try {
-    return jwt.verify(token, process.env.TOKEN_SECRET);
+    return await jwt.verify(token, process.env.TOKEN_SECRET);
   } catch (error) {
     throw new Error("El token no es válido.");
   }

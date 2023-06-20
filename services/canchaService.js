@@ -50,11 +50,7 @@ async function getDisponibilidadPorDia(mes, dia, idCancha) {
   return disponibilidad;
 }
 
-async function crearReserva(fecha, hora, idUsuario, idCancha) {
-  const tipoDate = new Date(fecha);
-  const mes = tipoDate.getMonth();
-  const dia = tipoDate.getDate() - 1;
-
+async function crearReserva(mes, dia, hora, idUsuario, idCancha) {
   const cancha = await canchaData.getCanchaById(idCancha);
   if (!cancha) {
     throw new Error("La cancha no existe.");
@@ -71,7 +67,7 @@ async function crearReserva(fecha, hora, idUsuario, idCancha) {
   }
 
   try {
-    const reserva = new Reserva(tipoDate, hora, idUsuario, idCancha);
+    const reserva = new Reserva(mes, dia, hora, idUsuario, idCancha);
     const result = await reservaData.crearReserva(reserva);
     await canchaData.registrarReserva(reserva, result.insertedId);
     await usuarioData.registrarReserva(reserva, result.insertedId);
@@ -99,22 +95,19 @@ async function getMisReservas(idCancha) {
 
 async function cancelarReservaConfirmed(idReserva) {
   try {
-    const result = reservaData.cancelarReserva(idReserva);
+    const result = await reservaData.cancelarReserva(idReserva);
     return result;
   } catch (error) {
     throw error;
   }
 }
 
-async function cancelarReserva(fecha, idCancha, idReserva) {
+async function cancelarReserva(mes, dia, idCancha, idReserva) {
   const cancha = await canchaData.getCanchaById(idCancha);
   if (!cancha) {
     throw new Error("La cancha no existe.");
   }
-
-  const tipoDate = new Date(fecha);
-  const mes = tipoDate.getMonth();
-  const dia = tipoDate.getDate() - 1;
+  
   const existeReserva = await canchaData.tieneEstaReserva(mes, dia, cancha, idReserva);
   if (!existeReserva) {
     throw new Error("La reserva no está registrada en esta cancha.");

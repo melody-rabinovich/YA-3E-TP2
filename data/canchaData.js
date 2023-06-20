@@ -12,7 +12,6 @@ const getCanchas = async () => {
     return documentos;
   } catch (error) {
     console.log("Error al traer a las canchas.", error);
-
     res.status(500).json({ error: "Ocurrió un error al obtener las canchas." });
   }
 };
@@ -116,8 +115,8 @@ const registrarReserva = async (reserva, insertedId) => {
   const collection = cliente.db("mydatabase").collection("canchas");
 
   try {
-    const mes = reserva.fecha.getMonth();
-    const dia = reserva.fecha.getDate() - 1;
+    const mes = reserva.mes;
+    const dia = reserva.dia;
   
     const filter = { numero: reserva.idCancha };
     const update = { $push: { [`calendario2023.${mes}.${dia}.reservas`]: insertedId } };

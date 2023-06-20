@@ -9,7 +9,7 @@ async function getUsuarios() {
     const usuarios = await usuarioData.getUsuarios();
     return usuarios;
   } catch (error) {
-    console.log("Error al obtener los usuarios.", error);
+    console.log(`Error al obtener los usuarios.`, error);
     throw error;
   }
 }
@@ -38,11 +38,27 @@ async function crearUsuario(nombre, mail, password) {
   }
 };
 
-async function cambiarNombre(mail, nombre) {
+async function crearAdmin(nombre, mail, password) {
   try {
-    await usuarioData.cambiarNombre(mail, nombre)
+    const usuarioInsertado = await crearUsuario(nombre, mail, password);
+    await usuarioData.setAdmin(mail);
+    return usuarioInsertado;
   } catch (error) {
-    console.log(error);
+    throw error;
+  }
+};
+
+async function cambiarNombre(mail, nombre) {
+  const usuario = await usuarioData.getUsuarioByMail(mail);
+  if (!usuario) {
+    throw new Error("El usuario no existe.");
+  }
+
+  try {
+    const result = await usuarioData.cambiarNombre(mail, nombre)
+    return result;
+  } catch (error) {
+    console.log(`Error al cambiar el nombre del usuario con mail ${mail}.`, error);
     throw error;
   }
 };
@@ -82,9 +98,10 @@ async function cancelarReserva(idUsuario, idReserva) {
 }
 
 module.exports = {
-  crearUsuario,
   getUsuarios,
   getUsuarioById,
+  crearUsuario,
+  crearAdmin,
   cambiarNombre,
   getMisReservas,
   cancelarReserva,

@@ -1,11 +1,9 @@
 
 const ObjectId = require("mongodb").ObjectId;
 const { obtenerCliente } = require("../database");
-const reservaData = require("./reservaData.js");
+const { Rol } = require("../models/usuario.js");
 
 const getUsuarios = async () => {
-  console.log("Estoy trayendo todos los usuarios.");
-
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("usuarios");
 
@@ -14,6 +12,7 @@ const getUsuarios = async () => {
     return documentos;
   } catch (error) {
     console.log("Error al traer a los usuarios.", error);
+    throw error;
   }
 };
 
@@ -26,6 +25,20 @@ const getUsuarioById = async (id) => {
     return usuario;
   } catch (error) {
     console.log("Error al traer al usuario.", error);
+    throw error;
+  }
+};
+
+const getUsuarioByMail = async (mail) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("usuarios");
+
+  try {
+    const usuario = await collection.findOne({ mail: mail });
+    return usuario;
+  } catch (error) {
+    console.log("Error al traer al usuario.", error);
+    throw error;
   }
 };
 
@@ -42,6 +55,29 @@ const insertarUsuario = async (usuario) => {
   }
 };
 
+const setAdmin = async (mail) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("usuarios");
+
+  try {
+    const result = await collection.updateOne(
+      { mail: mail },
+      {$set:
+        {rol: Rol.Admin}
+      }
+    )
+    return result;
+  } catch (error) {
+    console.log("Error al crear el usuario administrador.", error);
+    throw error;
+  }
+};
+
+const esAdmin = async (id) => {
+  const usuario = await getUsuarioById(id);
+  return usuario.rol == Rol.Admin;
+}
+
 const validarMail = async (mail) => {
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("usuarios");
@@ -55,20 +91,34 @@ const validarMail = async (mail) => {
   }
 };
 
+const validarPass = async (mail, password) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("usuarios");
+
+  try {
+    const usuario = await collection.findOne({ mail: mail });
+    return usuario.password == password; //Devuelve true si la contraseña es correcta, false si no lo es
+  } catch (error) {
+    console.log("Error al validar la contraseña.", error);
+    throw error;
+  }
+};
+
 const cambiarNombre = async (mail, nuevoNombre) => {
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("usuarios");
 
   try {
-    //const usuario = await getUsuarioId(id);
-    collection.updateOne(
+    const result = await collection.updateOne(
       { mail: mail },
       {$set:
         {nombre: nuevoNombre}
       }
     )
+    return result;
   } catch (error) {
     console.log("Error al cambiar el nombre.", error);
+    throw error;
   }
 };
 
@@ -83,6 +133,7 @@ const registrarReserva = async (reserva, insertedId) => {
     return result;
   } catch (error) {
     console.log("Error al generar la reserva.", error);
+    throw error;
   }
 }
 
@@ -99,14 +150,19 @@ const getMisReservas = async (usuario) => {
     return reservas;
   } catch (error) {
     console.log("Error al traer las reservas del usuario.", error);
+    throw error;
   }
 };
 
 module.exports = {
-  insertarUsuario,
   getUsuarios,
   getUsuarioById,
+  getUsuarioByMail,
+  insertarUsuario,
+  setAdmin,
+  esAdmin,
   validarMail,
+  validarPass,
   cambiarNombre,
   registrarReserva,
   getMisReservas,

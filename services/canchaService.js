@@ -74,10 +74,11 @@ async function crearReserva(fecha, hora, idUsuario, idCancha) {
     const reserva = new Reserva(tipoDate, hora, idUsuario, idCancha);
     const result = await reservaData.crearReserva(reserva);
     await canchaData.registrarReserva(reserva, result.insertedId);
-    await canchaData.registrarReserva(reserva, result.insertedId);
+    await usuarioData.registrarReserva(reserva, result.insertedId);
     return result;
   } catch (error) {
-    console.log(error);
+    console.log(`Error al crear la reserva.`, error);
+    throw error;
   }
 }
 
@@ -128,9 +129,9 @@ async function cancelarReserva(fecha, idCancha, idReserva) {
 }
 
 module.exports = {
-  crearCancha,
   getCanchas,
   getCanchaById,
+  crearCancha,
   getDisponibilidadPorDia,
   crearReserva,
   getMisReservas,

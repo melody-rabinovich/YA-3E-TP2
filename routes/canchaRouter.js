@@ -77,9 +77,9 @@ router.post("/", async function (req, res, next) {//Admin
     });
   }
 
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
-    await loginService.validarAdmin(decodificado.id);*/
+    await loginService.validarAdmin(decodificado.id);
 
     const response = await canchaService.crearCancha(req.body.numero, req.body.nombre, req.body.tamanio, req.body.precio);
     res.status(201).json({
@@ -110,29 +110,28 @@ router.get("/:id/reservar/mes=:mes/dia=:dia", async function (req, res, next) {/
 });
 
 router.put("/:id/reservar", async function (req, res, next) {//Usuario y Admin
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
       await validarTokenId(decodificado.id, req.body.idUsuario);
-    }*/
-  
-    if (req.body.mes == undefined || req.body.mes < 1 || req.body.mes > 12) {
-      return res.status(400).json({
-        message: "No se ingresó un mes válido, inténtelo nuevamente.",
-      });
-    } else if (req.body.dia == undefined || req.body.dia < 1 || (req.body.mes == 2 && req.body.dia > 28) || ((req.body.mes == 1 || req.body.mes == 3 || req.body.mes == 5 || req.body.mes == 7 || req.body.mes == 8 || req.body.mes == 10 || req.body.mes == 12) && req.body.dia > 31) || ((req.body.mes == 4 || req.body.mes == 6 || req.body.mes == 9 || req.body.mes == 11) && req.body.dia > 30)) {
-      return res.status(400).json({
-        message: "No se ingresó un día válido, inténtelo nuevamente.",
-      });
-    } else if (req.body.hora == undefined || req.body.hora < 0 || req.body.hora > 23) {
-      return res.status(400).json({
-        message: "No se ingresó una hora válida, inténtelo nuevamente.",
-      });
+    }
+
+    let mes = parseInt(req.body.mes);
+    let dia = parseInt(req.body.dia);
+    let hora = parseInt(req.body.hora);
+
+    if (mes == undefined || isNaN(mes) || mes < 1 || mes > 12) {
+        throw new Error("No se ingresó un mes válido, inténtelo nuevamente.");
+    } else if (dia == undefined || isNaN(dia) || dia < 1 || (mes == 2 && dia > 28) || ((mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) && dia > 31) || ((mes == 4 || mes == 6 || mes == 9 || mes == 11) && dia > 30)) {
+        throw new Error("No se ingresó un día válido, inténtelo nuevamente.");
+    } else if (hora == undefined || isNaN(hora) || hora < 0 || hora > 23) {
+        throw new Error("No se ingresó una hora válida, inténtelo nuevamente.");
     }
         
-    const mes = req.body.mes - 1;
-    const dia = req.body.dia - 1;
+    mes = req.body.mes - 1;
+    dia = req.body.dia - 1;
+
     const response = await canchaService.crearReserva(mes, dia, req.body.hora, req.body.idUsuario, req.params.id);
     res.status(201).json({
       message: "Reserva creada exitosamente.",
@@ -146,9 +145,9 @@ router.put("/:id/reservar", async function (req, res, next) {//Usuario y Admin
 });
 
 router.get("/:id/MisReservas", async function (req, res, next) {//Admin
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
-    await loginService.validarAdmin(decodificado.id);*/
+    await loginService.validarAdmin(decodificado.id);
 
     const response = await canchaService.getMisReservas(req.params.id);
     res.status(201).json({
@@ -163,9 +162,9 @@ router.get("/:id/MisReservas", async function (req, res, next) {//Admin
 });
 
 router.delete("/:id/MisReservas/mes=:mes/dia=:dia/:idReserva", async function (req, res, next) {//Admin
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
-    await loginService.validarAdmin(decodificado.id);*/
+    await loginService.validarAdmin(decodificado.id);
 
     const mes = req.params.mes - 1;
     const dia = req.params.dia - 1;

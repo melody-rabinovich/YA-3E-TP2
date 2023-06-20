@@ -19,9 +19,9 @@ const schemaLogin = Joi.object({
 })
 
 router.get("/", async function (req, res) {//Admin
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
-    await loginService.validarAdmin(decodificado.id);*/
+    await loginService.validarAdmin(decodificado.id);
 
     const usuarios = await usuarioService.getUsuarios();
     res.json(usuarios);
@@ -32,12 +32,12 @@ router.get("/", async function (req, res) {//Admin
 });
 
 router.get("/:id", async function (req, res, next) {//Usuario y Admin
-  try{/*
+  try{
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
       await validarTokenId(decodificado.id, req.params.id);
-    }*/
+    }
   
     let miUsuario = await usuarioService.getUsuarioById(req.params.id);
   
@@ -115,9 +115,9 @@ router.post("/register/admin", async function (req, res) {//Admin
       )
   }
 
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
-    await loginService.validarAdmin(decodificado.id);*/
+    await loginService.validarAdmin(decodificado.id);
   
     const response = await usuarioService.crearAdmin(req.body.nombre, req.body.mail, req.body.password);
     res.status(201).json({
@@ -171,12 +171,12 @@ router.post("/login", async function (req, res) {//All
 });
 
 router.put("/:id/cambiarnombre", async function (req, res, next) {//Usuario y Admin
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
       await validarTokenId(decodificado.id, req.params.id);
-    }*/
+    }
   
     const response = await usuarioService.cambiarNombre(req.body.mail, req.body.nombre);
     return res.status(201).json({
@@ -191,12 +191,12 @@ router.put("/:id/cambiarnombre", async function (req, res, next) {//Usuario y Ad
 });
 
 router.get("/:id/MisReservas", async function (req, res, next) {//Usuario y Admin
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
       await validarTokenId(decodificado.id, req.params.id);
-    }*/
+    }
   
     const response = await usuarioService.getMisReservas(req.params.id);
     res.status(201).json({
@@ -212,12 +212,12 @@ router.get("/:id/MisReservas", async function (req, res, next) {//Usuario y Admi
 });
 
 router.delete("/:id/MisReservas/:idReserva", async function (req, res, next) {//Usuario y Admin
-  try {/*
+  try {
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
       await validarTokenId(decodificado.id, req.params.id);
-    }*/
+    }
   
     const response = await usuarioService.cancelarReserva(req.params.id, req.params.idReserva);
     res.status(201).json({

@@ -157,10 +157,10 @@ router.post("/login", async function (req, res) {//All
       id: usuario._id,
       mail: usuario.mail,
     }, process.env.TOKEN_SECRET, {expiresIn: "1h"}, (error, token) => {
-      res.header('auth-token', token).json({
+      return res.header('Authorization', token).json({
         error: null,
         mensaje: "Bienvenido.",
-        data: {token}
+        token: token 
       })
     })
   } catch (error) {

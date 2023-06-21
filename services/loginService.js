@@ -27,7 +27,7 @@ async function existeToken(req) {
 }
 
 async function getToken(req) {
-  return req.header('auth-token');
+  return req.header('Authorization');
 }
 
 async function validarToken(req){

@@ -160,7 +160,8 @@ router.post("/login", async function (req, res) {//All
       return res.header('Authorization', token).json({
         error: null,
         mensaje: "Bienvenido.",
-        token: token 
+        token: token,
+        usuario: usuario,
       })
     })
   } catch (error) {

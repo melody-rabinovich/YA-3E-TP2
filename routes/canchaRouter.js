@@ -109,7 +109,7 @@ router.get("/:id/reservar/mes=:mes/dia=:dia", async function (req, res, next) {/
   }
 });
 
-router.put("/:id/reservar", async function (req, res, next) {//Usuario y Admin
+router.post("/:id/reservar", async function (req, res, next) {//Usuario y Admin
   try {
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);

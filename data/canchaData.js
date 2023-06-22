@@ -1,13 +1,9 @@
 
-const ObjectId = require("mongodb").ObjectId;
 const { obtenerCliente } = require("../database");
 const reservaData = require("./reservaData.js");
-const { Cancha } = require("../models/cancha");
 const { EstadoReserva } = require("../models/reserva");
 
 const getCanchas = async () => {
-  console.log("Estoy trayendo todas las canchas.");
-
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("canchas");
 
@@ -16,7 +12,6 @@ const getCanchas = async () => {
     return documentos;
   } catch (error) {
     console.log("Error al traer a las canchas.", error);
-
     res.status(500).json({ error: "Ocurrió un error al obtener las canchas." });
   }
 };
@@ -107,16 +102,6 @@ const estaOcupada = async (mes, dia, hora, cancha) => {
   const reservas = await getMisReservasPorDia(mes, dia, cancha);
 
   try {
-    /*
-    let reservaEncontrada2 = null;
-    let i = 0;
-    while (reservaEncontrada2 == null && i < reservas.length){
-      if(reservas[i].hora == hora){
-        reservaEncontrada2 = reservas[i];
-      }
-      i++;
-    }
-    */
     let reservaEncontrada = await reservas.find(r => r.hora == hora && r.estado == EstadoReserva.Activa);
     return reservaEncontrada != null; //Devuelve true si la reserva existe, false si no existe
   } catch (error) {
@@ -130,8 +115,8 @@ const registrarReserva = async (reserva, insertedId) => {
   const collection = cliente.db("mydatabase").collection("canchas");
 
   try {
-    const mes = reserva.fecha.getMonth();
-    const dia = reserva.fecha.getDate() - 1;
+    const mes = reserva.mes;
+    const dia = reserva.dia;
   
     const filter = { numero: reserva.idCancha };
     const update = { $push: { [`calendario2023.${mes}.${dia}.reservas`]: insertedId } };

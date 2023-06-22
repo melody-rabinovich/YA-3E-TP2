@@ -5,8 +5,9 @@ const EstadoReserva = {
 }
 
 class Reserva {
-  constructor(fecha, hora, idUsuario, idCancha) {
-    this.fecha = fecha;
+  constructor(mes, dia, hora, idUsuario, idCancha) {
+    this.mes = mes;
+    this.dia = dia;
     this.hora;
     this.setHora(hora);
     this.idUsuario = idUsuario;

@@ -2,11 +2,8 @@
 const ObjectId = require("mongodb").ObjectId;
 const { EstadoReserva } = require("../models/reserva.js");
 const { obtenerCliente } = require("../database");
-const usuarioData = require("./usuarioData.js");
 
 const getReservas = async () => {
-  console.log("Estoy trayendo todas las reservas.");
-
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("reservas");
 
@@ -15,7 +12,6 @@ const getReservas = async () => {
     return documentos;
   } catch (error) {
     console.log("Error al traer a las reservas.", error);
-
     res.status(500).json({ error: "Ocurrió un error al obtener las reservas." });
   }
 };

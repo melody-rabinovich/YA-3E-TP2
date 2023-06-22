@@ -114,7 +114,7 @@ router.put("/:id/reservar", async function (req, res, next) {//Usuario y Admin
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
-      await validarTokenId(decodificado.id, req.body.idUsuario);
+      await loginService.validarTokenId(decodificado.id, req.body.idUsuario);
     }
 
     let mes = parseInt(req.body.mes);

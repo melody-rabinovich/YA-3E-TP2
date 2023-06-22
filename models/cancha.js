@@ -18,7 +18,6 @@ class Cancha {
       const dias = [];
       while (mes.getMonth() === i) {
         dias.push(new Dia());
-//        dias.push({"fecha": mes.getDate(), "reservas": []});
         mes.setDate(mes.getDate() + 1);
       }
       calendario.push(dias); //Se guardan los IDs de las reservas

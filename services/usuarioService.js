@@ -1,5 +1,4 @@
 
-const ObjectId = require("mongodb").ObjectId;
 const { Usuario } = require("../models/usuario.js");
 const usuarioData = require("../data/usuarioData.js");
 const canchaService = require("../services/canchaService");

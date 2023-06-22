@@ -36,7 +36,7 @@ router.get("/:id", async function (req, res, next) {//Usuario y Admin
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
-      await validarTokenId(decodificado.id, req.params.id);
+      await loginService.validarTokenId(decodificado.id, req.params.id);
     }
   
     let miUsuario = await usuarioService.getUsuarioById(req.params.id);
@@ -175,7 +175,7 @@ router.put("/:id/cambiarnombre", async function (req, res, next) {//Usuario y Ad
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
-      await validarTokenId(decodificado.id, req.params.id);
+      await loginService.validarTokenId(decodificado.id, req.params.id);
     }
   
     const response = await usuarioService.cambiarNombre(req.body.mail, req.body.nombre);
@@ -195,7 +195,7 @@ router.get("/:id/MisReservas", async function (req, res, next) {//Usuario y Admi
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
-      await validarTokenId(decodificado.id, req.params.id);
+      await loginService.validarTokenId(decodificado.id, req.params.id);
     }
   
     const response = await usuarioService.getMisReservas(req.params.id);
@@ -216,7 +216,7 @@ router.delete("/:id/MisReservas/:idReserva", async function (req, res, next) {//
     const decodificado = await loginService.validarToken(req);
     const admin = await loginService.esAdmin(decodificado.id);
     if(!admin){
-      await validarTokenId(decodificado.id, req.params.id);
+      await loginService.validarTokenId(decodificado.id, req.params.id);
     }
   
     const response = await usuarioService.cancelarReserva(req.params.id, req.params.idReserva);

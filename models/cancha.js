@@ -1,6 +1,17 @@
 
 const { Dia } = require("./dia");
 
+const HorarioAtencion = {
+  Apertura: 14,
+  Cierre: 23,
+}
+
+const Tamanios = {
+  Cinco: 5,
+  Ocho: 8,
+  Once: 11,
+}
+
 class Cancha {
   constructor(numero, nombre, tamanio, precio) {
     this.numero = numero;
@@ -27,5 +38,7 @@ class Cancha {
 }
 
 module.exports = {
-  Cancha
+  Cancha,
+  HorarioAtencion,
+  Tamanios,
 };

@@ -3,16 +3,10 @@ const usuarioData = require("../data/usuarioData.js");
 const jwt = require('jsonwebtoken');
 
 async function loguearUsuario(mail, password) {
-  const mailExistente = await usuarioData.validarMail(mail);
-  if (!mailExistente) {
-    throw new Error("El mail no está registrado.");
-  }
-
-  const passValida = await usuarioData.validarPass(mail, password);
-  if (!passValida) {
-    throw new Error("La contraseña no es válida.");
-  }
   try {
+    await checkMailRegistrado(mail);
+    await checkPassValida(mail, password);
+
     const usuario = await usuarioData.getUsuarioByMail(mail);
     return usuario;
   } catch (error) {
@@ -68,6 +62,20 @@ async function validarTokenId(idDecodificado, id){
 async function validarTokenMail(mailDecodificado, mail){
   if(mailDecodificado != mail){
     throw new Error("Acceso denegado.");
+  }
+}
+
+async function checkMailRegistrado(mail) {
+  const mailExistente = await usuarioData.validarMail(mail);
+  if (!mailExistente) {
+    throw new Error("El mail no está registrado.");
+  }
+}
+
+async function checkPassValida(mail, password) {
+  const passValida = await usuarioData.validarPass(mail, password);
+  if (!passValida) {
+    throw new Error("La contraseña no es válida.");
   }
 }
 

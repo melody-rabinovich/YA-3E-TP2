@@ -52,32 +52,12 @@ router.get("/:id", async function (req, res, next) {//All
 });
 
 router.post("/", async function (req, res, next) {//Admin
-
-  if (req.body.numero == undefined) {
-    return res.status(400).json({
-      message: "No se insertó el numero, inténtelo nuevamente.",
-    });
-  }
-
-  if (req.body.nombre == undefined) {
-    return res.status(400).json({
-      message: "No se insertó el nombre, inténtelo nuevamente.",
-    });
-  }
-
-  if (req.body.tamanio == undefined) {
-    return res.status(400).json({
-      message: "No se insertó el tamaño, inténtelo nuevamente.",
-    });
-  }
-
-  if (req.body.precio == undefined) {
-    return res.status(400).json({
-      message: "No se insertó el precio, inténtelo nuevamente.",
-    });
-  }
-
   try {
+    checkBodyNumero(req.body.numero);
+    checkBodyNombre(req.body.nombre);
+    checkBodyTamanio(req.body.tamanio);
+    checkBodyPrecio(req.body.precio);
+  
     const decodificado = await loginService.validarToken(req);
     await loginService.validarAdmin(decodificado.id);
 
@@ -93,7 +73,7 @@ router.post("/", async function (req, res, next) {//Admin
   }
 });
 
-router.get("/:id/reservar/mes=:mes/dia=:dia", async function (req, res, next) {//All
+router.get("/:id/reservar/mes/:mes/dia/:dia", async function (req, res, next) {//All
   try {
     const mes = req.params.mes - 1;
     const dia = req.params.dia - 1;
@@ -161,7 +141,7 @@ router.get("/:id/MisReservas", async function (req, res, next) {//Admin
   }
 });
 
-router.delete("/:id/MisReservas/mes=:mes/dia=:dia/:idReserva", async function (req, res, next) {//Admin
+router.delete("/:id/MisReservas/mes/:mes/dia/:dia/:idReserva", async function (req, res, next) {//Admin
   try {
     const decodificado = await loginService.validarToken(req);
     await loginService.validarAdmin(decodificado.id);
@@ -180,5 +160,29 @@ router.delete("/:id/MisReservas/mes=:mes/dia=:dia/:idReserva", async function (r
       .json({ mensaje: "Ocurrió un error al cancelar la reserva.", error: error.message });
   }
 });
+
+function checkBodyNumero(numero) {
+  if (numero == undefined) {
+    throw new Error("No se insertó el numero, inténtelo nuevamente.");
+  }
+}
+
+function checkBodyNombre(nombre) {
+  if (nombre == undefined) {
+    throw new Error("No se insertó el nombre, inténtelo nuevamente.");
+  }
+}
+
+function checkBodyTamanio(tamanio) {
+  if (tamanio == undefined) {
+    throw new Error("No se insertó el tamaño, inténtelo nuevamente.");
+  }
+}
+
+function checkBodyPrecio(precio) {
+  if (precio == undefined) {
+    throw new Error("No se insertó el precio, inténtelo nuevamente.");
+  }
+}
 
 module.exports = router;

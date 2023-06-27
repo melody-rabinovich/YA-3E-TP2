@@ -2,6 +2,8 @@
 const ObjectId = require("mongodb").ObjectId;
 const { EstadoReserva } = require("../models/reserva.js");
 const { obtenerCliente } = require("../database");
+const canchaData = require("./canchaData.js");
+const usuarioData = require("./usuarioData.js");
 
 const getReservas = async () => {
   const cliente = obtenerCliente();
@@ -12,7 +14,7 @@ const getReservas = async () => {
     return documentos;
   } catch (error) {
     console.log("Error al traer a las reservas.", error);
-    res.status(500).json({ error: "Ocurrió un error al obtener las reservas." });
+    throw error;
   }
 };
 
@@ -25,6 +27,7 @@ const getReservaById = async (id) => {
     return reserva;
   } catch (error) {
     console.log("Error al traer a la reserva.", error);
+    throw error;
   }
 };
 
@@ -33,10 +36,14 @@ const crearReserva = async (reserva) => {
   const collection = cliente.db("mydatabase").collection("reservas");
 
   try {
+    await canchaData.checkCancha(reserva.idCancha);
+    await usuarioData.checkUsuario(reserva.idUsuario);
+
     const result = await collection.insertOne(reserva);
     return result;
   } catch (error) {
     console.error("Error al insertar la reserva.", error);
+    throw error;
   }
 };
 
@@ -44,12 +51,9 @@ const cancelarReserva = async (idReserva) => {
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("reservas");
 
-  const reserva = await getReservaById(idReserva);
-  if (reserva.estado == EstadoReserva.Cancelada) {
-    throw new Error("Error: la reserva ya está cancelada.");
-  }
-
   try {
+    await checkReservaCancelada(idReserva);
+
     const filter = { _id: new ObjectId(reserva._id) };
     const update = { $set: { estado: EstadoReserva.Cancelada } };
     const result = await collection.updateOne(filter, update);
@@ -57,6 +61,13 @@ const cancelarReserva = async (idReserva) => {
   } catch (error) {
     console.log("Error al cambiar el estado de la reserva.", error);
     throw error;
+  }
+}
+
+async function checkReservaCancelada(idReserva) {
+  const reserva = await getReservaById(idReserva);
+  if (reserva.estado == EstadoReserva.Cancelada) {
+    throw new Error("Error: la reserva ya está cancelada.");
   }
 }
 

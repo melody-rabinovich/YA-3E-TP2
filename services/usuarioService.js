@@ -24,11 +24,9 @@ async function getUsuarioById(id) {
 }
 
 async function crearUsuario(nombre, mail, password) {
-  const mailExistente = await usuarioData.validarMail(mail);
-  if (mailExistente) {
-    throw new Error("El mail ya está registrado.");
-  }
   try {
+    await checkMailExistente(mail);
+
     const usuario = new Usuario(nombre, mail, password);
     const usuarioInsertado = await usuarioData.insertarUsuario(usuario);
     return usuarioInsertado;
@@ -47,13 +45,10 @@ async function crearAdmin(nombre, mail, password) {
   }
 };
 
-async function cambiarNombre(mail, nombre) {
-  const usuario = await usuarioData.getUsuarioByMail(mail);
-  if (!usuario) {
-    throw new Error("El usuario no existe.");
-  }
-
+async function cambiarNombre(idUsuario, mail, nombre) {
   try {
+    await checkUsuario(idUsuario);
+
     const result = await usuarioData.cambiarNombre(mail, nombre)
     return result;
   } catch (error) {
@@ -63,12 +58,9 @@ async function cambiarNombre(mail, nombre) {
 };
 
 async function getMisReservas(idUsuario) {
-  const usuario = await usuarioData.getUsuarioById(idUsuario);
-  if (!usuario) {
-    throw new Error("El usuario no existe.");
-  }
-
   try {
+    const usuario = await checkUsuario(idUsuario);
+
     const reservas = await usuarioData.getMisReservas(usuario);
     return reservas;
   } catch (error) {
@@ -78,21 +70,36 @@ async function getMisReservas(idUsuario) {
 }
 
 async function cancelarReserva(idUsuario, idReserva) {
-  const usuario = await usuarioData.getUsuarioById(idUsuario);
-  if (!usuario) {
-    throw new Error("El usuario no existe.");
-  }
-
-  const existeReserva = usuario.reservas.find(id => id == idReserva);
-  if (!existeReserva) {
-    throw new Error("El usuario no es titular de la reserva, por lo que no puede cancelarla.");
-  }
-
   try {
+    const usuario = await checkUsuario(idUsuario);
+    await checkReservaRegistrada(usuario, idReserva);
+  
     const result = await canchaService.cancelarReservaConfirmed(idReserva);
     return result;
   } catch (error) {
     throw error;
+  }
+}
+
+async function checkUsuario(idUsuario) {
+  const usuario = await usuarioData.getUsuarioById(idUsuario);
+  if (!usuario) {
+    throw new Error("El usuario no existe.");
+  }
+  return usuario;
+}
+
+async function checkMailExistente(mail) {
+  const mailExistente = await usuarioData.validarMail(mail);
+  if (mailExistente) {
+    throw new Error("El mail ya está registrado.");
+  }
+}
+
+async function checkReservaRegistrada(usuario, idReserva) {
+  const existeReserva = usuario.reservas.find(id => id == idReserva);
+  if (!existeReserva) {
+    throw new Error("El usuario no es titular de la reserva, por lo que no puede cancelarla.");
   }
 }
 
@@ -104,4 +111,5 @@ module.exports = {
   cambiarNombre,
   getMisReservas,
   cancelarReserva,
+  checkUsuario,
 };

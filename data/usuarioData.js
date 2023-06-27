@@ -127,6 +127,8 @@ const registrarReserva = async (reserva, insertedId) => {
   const collection = cliente.db("mydatabase").collection("usuarios");
 
   try {
+    await checkUsuario(reserva.idUsuario);
+
     const filter = { _id: new ObjectId(reserva.idUsuario) };
     const update = { $push: { reservas: insertedId } };
     const result = await collection.updateOne(filter, update);
@@ -154,6 +156,14 @@ const getMisReservas = async (usuario) => {
   }
 };
 
+const checkUsuario = async (idUsuario) => {
+  const usuario = await getCanchaById(idUsuario);
+  if (!usuario) {
+    throw new Error("El usuario no existe.");
+  }
+  return usuario;
+}
+
 module.exports = {
   getUsuarios,
   getUsuarioById,
@@ -166,4 +176,5 @@ module.exports = {
   cambiarNombre,
   registrarReserva,
   getMisReservas,
+  checkUsuario,
 };

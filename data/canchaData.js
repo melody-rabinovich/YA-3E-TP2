@@ -1,5 +1,7 @@
 
 const { obtenerCliente } = require("../database");
+const { HorarioAtencion } = require("../models/cancha");
+const { Tamanios } = require("../models/cancha");
 const reservaData = require("./reservaData.js");
 const { EstadoReserva } = require("../models/reserva");
 
@@ -12,7 +14,7 @@ const getCanchas = async () => {
     return documentos;
   } catch (error) {
     console.log("Error al traer a las canchas.", error);
-    res.status(500).json({ error: "Ocurrió un error al obtener las canchas." });
+    throw error;
   }
 };
 
@@ -25,6 +27,7 @@ const getCanchaById = async (id) => {
     return cancha;
   } catch (error) {
     console.log("Error al traer a la cancha.", error);
+    throw error;
   }
 };
 
@@ -33,10 +36,15 @@ const insertarCancha = async (cancha) => {
   const collection = cliente.db("mydatabase").collection("canchas");
 
   try {
+    await validarNumero(cancha.numero);
+    await validarNombre(cancha.nombre);
+    await validarTamanio(cancha.tamanio);
+
     const result = await collection.insertOne(cancha);
     return result;
   } catch (error) {
     console.error("Error al insertar la cancha.", error);
+    throw error;
   }
 };
 
@@ -46,10 +54,45 @@ const validarNumero = async (numero) => {
 
   try {
     const cancha = await collection.findOne({ numero: numero });
-    return cancha != null; //Devuelve true si el número está registrado, false si no lo está
+    if (cancha != null) {
+      throw new Error("El número ya está registrado.");
+    }
   } catch (error) {
     console.log("Error al validar el número de la cancha.", error);
     throw error;
+  }
+};
+
+const validarNombre = async (nombre) => {
+  const cliente = obtenerCliente();
+  const collection = cliente.db("mydatabase").collection("canchas");
+
+  try {
+    const cancha = await collection.findOne({ nombre: nombre });
+    if (cancha != null) {
+      throw new Error("El nombre ya está registrado.");
+    }
+  } catch (error) {
+    console.log("Error al validar el nombre de la cancha.", error);
+    throw error;
+  }
+};
+
+const validarTamanio = async (tamanio) => {
+  const tamanios = await Object.keys(Tamanios).map(key => Tamanios[key]);
+  let tamanioValido = false;
+  let i = 0;
+
+  while (tamanioValido == false && i < tamanios.length){
+    if(tamanio == tamanio[i]) {
+      tamanioValido = true;
+    } else {
+      i++
+    }
+  }
+
+  if (!tamanioValido) {
+    throw new Error("El tamaño ingresado no es válido.");
   }
 };
 
@@ -64,9 +107,9 @@ const getDisponibilidadPorDia = async (mes, dia, cancha) => {
       }
     }
 */
-//  De esta forma me pasa de 34 segundos y medio, a 1 segundo 1 y medio
+//  De esta forma me pasa de 34 segundos y medio, a 1 segundo y medio
     let disponibilidad = [];
-    for(let i = 0; i < 24; i++){
+    for(let i = HorarioAtencion.Apertura; i < HorarioAtencion.Cierre; i++){
       disponibilidad.push(i);
     }
 
@@ -79,6 +122,7 @@ const getDisponibilidadPorDia = async (mes, dia, cancha) => {
     return disponibilidad;
   } catch (error) {
     console.error("Error al calcular la disponibilidad por día.", error);
+    throw error;
   }
 };
 
@@ -95,6 +139,7 @@ const getMisReservasPorDia = async (mes, dia, cancha) => {
     return reservas;
   } catch (error) {
     console.log("Error al traer las reservas de la cancha.", error);
+    throw error;
   }
 };
 
@@ -115,6 +160,8 @@ const registrarReserva = async (reserva, insertedId) => {
   const collection = cliente.db("mydatabase").collection("canchas");
 
   try {
+    await checkCancha(reserva.idCancha)
+
     const mes = reserva.mes;
     const dia = reserva.dia;
   
@@ -124,6 +171,7 @@ const registrarReserva = async (reserva, insertedId) => {
     return result;
   } catch (error) {
     console.log("Error al generar la reserva.", error);
+    throw error;
   }
 };
 
@@ -150,18 +198,30 @@ const getMisReservas = async (cancha) => {
     return reservas;
   } catch (error) {
     console.log("Error al traer las reservas del usuario.", error);
+    throw error;
   }
 };
+
+const checkCancha = async (idCancha) => {
+  const cancha = await getCanchaById(idCancha);
+  if (!cancha) {
+    throw new Error("La cancha no existe.");
+  }
+  return cancha;
+}
 
 module.exports = {
   getCanchas,
   getCanchaById,
   insertarCancha,
   validarNumero,
+  validarNombre,
+  validarTamanio,
   getDisponibilidadPorDia,
   getMisReservasPorDia,
   estaOcupada,
   registrarReserva,
   tieneEstaReserva,
   getMisReservas,
+  checkCancha,
 };

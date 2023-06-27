@@ -6,5 +6,5 @@ class Dia {
 }
 
 module.exports = {
-  Dia
+  Dia,
 };

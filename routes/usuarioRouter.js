@@ -179,7 +179,7 @@ router.put("/:id/cambiarnombre", async function (req, res, next) {//Usuario y Ad
       await loginService.validarTokenId(decodificado.id, req.params.id);
     }
   
-    const response = await usuarioService.cambiarNombre(req.body.mail, req.body.nombre);
+    const response = await usuarioService.cambiarNombre(req.params.id, req.body.mail, req.body.nombre);
     return res.status(201).json({
       message: "Cambio de nombre exitoso.",
       response: response,

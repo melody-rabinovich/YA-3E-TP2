@@ -1,5 +1,6 @@
 
 const { HorarioAtencion } = require("../models/cancha");
+const { Tamanios } = require("../models/cancha");
 const { Cancha } = require("../models/cancha");
 const { Reserva } = require("../models/reserva");
 const usuarioService = require("../services/usuarioService");
@@ -9,29 +10,31 @@ const reservaData = require("../data/reservaData");
 
 async function getCanchas() {
   try {
-    const canchas = await canchaData.getCanchas();
-    return canchas;
+    const canchasConCalendario = await canchaData.getCanchas();
+    const canchasSinCalendario = await removerCalendarioDeCanchas(canchasConCalendario);
+    return canchasSinCalendario;
   } catch (error) {
-    console.log("Error al obtener las canchas.", error);
     throw error;
   }
 }
 
 async function getCanchaById(id) {
   try {
-    const cancha = await canchaData.getCanchaById(id);
-    return cancha;
+    await checkCancha(id);
+
+    const canchaConCalendario = await canchaData.getCanchaById(id);
+    const canchaSinCalendario = await removerCalendarioDeCancha(canchaConCalendario);
+    return canchaSinCalendario;
   } catch (error) {
-    console.log(`Error al obtener la cancha con id: ${id}.`, error);
     throw error;
   }
 }
 
 async function crearCancha(numero, nombre, tamanio, precio) {
   try {
-    await canchaData.validarNumero(numero);
-    await canchaData.validarNombre(nombre);
-    await canchaData.validarTamanio(tamanio);
+    await checkNumeroExistente(numero);
+    await checkNombreExistente(nombre);
+    await checkTamanio(tamanio);
 
     const cancha = new Cancha(numero, nombre, tamanio, precio);
     const canchaInsertada = await canchaData.insertarCancha(cancha);  
@@ -51,9 +54,8 @@ async function getDisponibilidadPorDia(mes, dia, idCancha) {
 
 async function crearReserva(mes, dia, hora, idUsuario, idCancha) {
   try {
-    const cancha = await canchaData.checkCancha(idCancha);
-    await usuarioData.checkUsuario(idUsuario);
-    await checkHorarioAtencion(hora);
+    const cancha = await checkCancha(idCancha);
+    await usuarioService.checkUsuario(idUsuario);
     await checkOcupada(mes, dia, hora, cancha);
 
     const reserva = new Reserva(mes, dia, hora, idUsuario, idCancha);
@@ -62,7 +64,6 @@ async function crearReserva(mes, dia, hora, idUsuario, idCancha) {
     await usuarioData.registrarReserva(reserva, result.insertedId);
     return result;
   } catch (error) {
-    console.log(`Error al crear la reserva.`, error);
     throw error;
   }
 }
@@ -74,7 +75,6 @@ async function getMisReservas(idCancha) {
     const reservas = await canchaData.getMisReservas(cancha);
     return reservas;
   } catch (error) {
-    console.log(`Error al obtener las reservas de la cancha número ${idCancha}.`, error);
     throw error;
   }
 }
@@ -92,6 +92,7 @@ async function cancelarReserva(mes, dia, idCancha, idReserva) {
   try {
     const cancha = await checkCancha(idCancha);
     await checkReservaRegistrada(mes, dia, cancha, idReserva);
+    await checkReservaCancelada(idReserva);
   
     const result = await cancelarReservaConfirmed(idReserva);
     return result;
@@ -128,6 +129,57 @@ async function checkReservaRegistrada(mes, dia, cancha, idReserva) {
   }
 }
 
+async function checkReservaCancelada(idReserva) {
+  const estaCancelada = await reservaData.estaCancelada(idReserva);
+  if (estaCancelada) {
+    throw new Error("La reserva ya está cancelada.");
+  }
+}
+
+async function removerCalendarioDeCancha(canchaConCalendario) {
+    let { calendario2023, ...canchaSinCalendario } = canchaConCalendario;
+    return canchaSinCalendario;
+}
+
+async function removerCalendarioDeCanchas(canchasConCalendario) {
+  let canchasSinCalendario = await canchasConCalendario.map(({ _id, numero, nombre, tamanio, precio, ...resto }) => {
+    return { _id, numero, nombre, tamanio, precio }
+  });
+  return canchasSinCalendario;
+}
+
+async function checkNumeroExistente(numero) {
+  const existeNumero = await canchaData.numeroExistente(numero);
+  if (existeNumero) {
+    throw new Error("El número ya está registrado.");
+  }
+}
+
+async function checkNombreExistente(nombre) {
+  const existeNombre = await canchaData.nombreExistente(nombre);
+  if (existeNombre) {
+    throw new Error("El nombre ya está registrado.");
+  }
+}
+
+async function checkTamanio(tamanio) {
+  const tamanios = await Object.keys(Tamanios).map(key => Tamanios[key]);
+  let tamanioValido = false;
+  let i = 0;
+
+  while (tamanioValido == false && i < tamanios.length){
+    if(tamanio == tamanios[i]) {
+      tamanioValido = true;
+    } else {
+      i++
+    }
+  }
+
+  if (!tamanioValido) {
+    throw new Error("El tamaño ingresado no es válido.");
+  }
+};
+
 module.exports = {
   getCanchas,
   getCanchaById,
@@ -137,4 +189,5 @@ module.exports = {
   getMisReservas,
   cancelarReserva,
   cancelarReservaConfirmed,
+  checkHorarioAtencion,
 };

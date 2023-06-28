@@ -1,6 +1,7 @@
 
-const usuarioData = require("../data/usuarioData.js");
+const usuarioData = require("../data/usuarioData");
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 async function loguearUsuario(mail, password) {
   try {
@@ -10,7 +11,6 @@ async function loguearUsuario(mail, password) {
     const usuario = await usuarioData.getUsuarioByMail(mail);
     return usuario;
   } catch (error) {
-    console.log(`Error al obtener el usuario con mail: ${mail}.`, error);
     throw error;
   }
 };
@@ -79,6 +79,19 @@ async function checkPassValida(mail, password) {
   }
 }
 
+async function checkAdmin(req){
+  const decodificado = await validarToken(req);
+  await validarAdmin(decodificado.id);
+}
+
+async function checkLogueado(req, idUsuario){
+  const decodificado = await validarToken(req);
+  const admin = await esAdmin(decodificado.id);
+  if(!admin){
+    await validarTokenId(decodificado.id, idUsuario);
+  }
+}
+
 module.exports = {
   loguearUsuario,
   existeToken,
@@ -89,4 +102,6 @@ module.exports = {
   validarAdmin,
   validarTokenId,
   validarTokenMail,
+  checkAdmin,
+  checkLogueado,
 };

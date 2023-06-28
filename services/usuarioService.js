@@ -1,24 +1,24 @@
 
-const { Usuario } = require("../models/usuario.js");
-const usuarioData = require("../data/usuarioData.js");
-const canchaService = require("../services/canchaService");
+const { Usuario } = require("../models/usuario");
+const usuarioData = require("../data/usuarioData");
+const reservaData = require("../data/reservaData");
 
 async function getUsuarios() {
   try {
     const usuarios = await usuarioData.getUsuarios();
     return usuarios;
   } catch (error) {
-    console.log(`Error al obtener los usuarios.`, error);
     throw error;
   }
 }
 
 async function getUsuarioById(id) {
   try {
+    await checkUsuario(id);
+
     const usuario = await usuarioData.getUsuarioById(id);
     return usuario;
   } catch (error) {
-    console.log(`Error al obtener el usuario con id: ${id}.`, error);
     throw error;
   }
 }
@@ -45,14 +45,13 @@ async function crearAdmin(nombre, mail, password) {
   }
 };
 
-async function cambiarNombre(idUsuario, mail, nombre) {
+async function cambiarNombre(idUsuario, nombre) {
   try {
     await checkUsuario(idUsuario);
 
-    const result = await usuarioData.cambiarNombre(mail, nombre)
+    const result = await usuarioData.cambiarNombre(idUsuario, nombre)
     return result;
   } catch (error) {
-    console.log(`Error al cambiar el nombre del usuario con mail ${mail}.`, error);
     throw error;
   }
 };
@@ -64,7 +63,6 @@ async function getMisReservas(idUsuario) {
     const reservas = await usuarioData.getMisReservas(usuario);
     return reservas;
   } catch (error) {
-    console.log(`Error al obtener las reservas del usuario de id ${idUsuario}.`, error);
     throw error;
   }
 }
@@ -74,7 +72,7 @@ async function cancelarReserva(idUsuario, idReserva) {
     const usuario = await checkUsuario(idUsuario);
     await checkReservaRegistrada(usuario, idReserva);
   
-    const result = await canchaService.cancelarReservaConfirmed(idReserva);
+    const result = await reservaData.cancelarReserva(idReserva);
     return result;
   } catch (error) {
     throw error;
@@ -97,7 +95,7 @@ async function checkMailExistente(mail) {
 }
 
 async function checkReservaRegistrada(usuario, idReserva) {
-  const existeReserva = usuario.reservas.find(id => id == idReserva);
+  const existeReserva = await usuario.reservas.find(id => id == idReserva);
   if (!existeReserva) {
     throw new Error("El usuario no es titular de la reserva, por lo que no puede cancelarla.");
   }

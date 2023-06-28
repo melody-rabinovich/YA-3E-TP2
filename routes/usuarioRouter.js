@@ -1,27 +1,15 @@
 
 const express = require("express");
 const router = express.Router();
+const usuarioRouterValidationService = require("../services/usuarioRouterValidationService");
 const usuarioService = require("../services/usuarioService");
 const loginService = require("../services/loginService");
-const Joi = require('@hapi/joi');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const schemaRegister = Joi.object({
-  nombre: Joi.string().min(2).max(100).required(),
-  mail: Joi.string().min(6).max(100).required().email(),
-  password: Joi.string().min(6).max(100).required(),
-})
-
-const schemaLogin = Joi.object({
-  mail: Joi.string().min(6).max(100).required().email(),
-  password: Joi.string().min(6).max(100).required(),
-})
-
 router.get("/", async function (req, res) {//Admin
   try {
-    const decodificado = await loginService.validarToken(req);
-    await loginService.validarAdmin(decodificado.id);
+    await loginService.checkAdmin(req);
 
     const usuarios = await usuarioService.getUsuarios();
     res.json(usuarios);
@@ -33,22 +21,10 @@ router.get("/", async function (req, res) {//Admin
 
 router.get("/:id", async function (req, res, next) {//Usuario y Admin
   try{
-    const decodificado = await loginService.validarToken(req);
-    const admin = await loginService.esAdmin(decodificado.id);
-    if(!admin){
-      await loginService.validarTokenId(decodificado.id, req.params.id);
-    }
-  
-    let miUsuario = await usuarioService.getUsuarioById(req.params.id);
-  
-    if (miUsuario) {
-      res.json(miUsuario);
-    } else {
-      res.status(404).json({
-        error: "NOT FOUND",
-        code: 404,
-      });
-    }
+    await loginService.checkLogueado(req, req.params.id);
+
+    let usuario = await usuarioService.getUsuarioById(req.params.id);
+    res.json(usuario);
   } catch (error) {
     res
       .status(400)
@@ -57,29 +33,12 @@ router.get("/:id", async function (req, res, next) {//Usuario y Admin
 });
 
 router.post("/register", async function (req, res) {//All
-  if (req.body.nombre == undefined) {
-    return res.status(400).json({
-      message: "No se ingresó el nombre, inténtelo nuevamente.",
-    });
-  } else if (req.body.mail == undefined) {
-    return res.status(400).json({
-      message: "No se ingresó el mail, inténtelo nuevamente.",
-    });
-  } else if (req.body.password == undefined) {
-    return res.status(400).json({
-      message: "No se ingresó la contraseña, inténtelo nuevamente.",
-    });
-  }
-
-  const { error } = schemaRegister.validate(req.body);
-    
-  if (error) {
-      return res.status(400).json(
-          {error: error.details[0].message}
-      )
-  }
-
   try {
+    usuarioRouterValidationService.checkBodyNombre(req.body.nombre);
+    usuarioRouterValidationService.checkBodyMail(req.body.mail);
+    usuarioRouterValidationService.checkBodyPass(req.body.password);
+    usuarioRouterValidationService.checkSchemaRegister(req.body);
+  
     const response = await usuarioService.crearUsuario(req.body.nombre, req.body.mail, req.body.password);
     res.status(201).json({
       message: "El usuario fue creado exitosamente.",
@@ -93,32 +52,13 @@ router.post("/register", async function (req, res) {//All
 });
 
 router.post("/register/admin", async function (req, res) {//Admin
-  if (req.body.nombre == undefined) {
-    return res.status(400).json({
-      message: "No se insertó el nombre, inténtelo nuevamente.",
-    });
-  } else if (req.body.mail == undefined) {
-    return res.status(400).json({
-      message: "No se insertó el mail, inténtelo nuevamente.",
-    });
-  } else if (req.body.password == undefined) {
-    return res.status(400).json({
-      message: "No se insertó la contraseña, inténtelo nuevamente.",
-    });
-  }
-
-  const { error } = schemaRegister.validate(req.body);
-    
-  if (error) {
-      return res.status(400).json(
-          {error: error.details[0].message}
-      )
-  }
-
   try {
-    const decodificado = await loginService.validarToken(req);
-    await loginService.validarAdmin(decodificado.id);
-  
+    await loginService.checkAdmin(req);
+    usuarioRouterValidationService.checkBodyNombre(req.body.nombre);
+    usuarioRouterValidationService.checkBodyMail(req.body.mail);
+    usuarioRouterValidationService.checkBodyPass(req.body.password);
+    usuarioRouterValidationService.checkSchemaRegister(req.body);
+    
     const response = await usuarioService.crearAdmin(req.body.nombre, req.body.mail, req.body.password);
     res.status(201).json({
       message: "El administrador fue creado exitosamente.",
@@ -132,25 +72,11 @@ router.post("/register/admin", async function (req, res) {//Admin
 });
 
 router.post("/login", async function (req, res) {//All
-  if (req.body.mail == undefined) {
-    return res.status(400).json({
-      message: "No se insertó el mail, inténtelo nuevamente.",
-    });
-  } else if (req.body.password == undefined) {
-    return res.status(400).json({
-      message: "No se insertó la contraseña, inténtelo nuevamente.",
-    });
-  }
-
-  const { error } = schemaLogin.validate(req.body);
-    
-  if (error) {
-      return res.status(400).json(
-          {error: error.details[0].message}
-      )
-  }
-
   try {
+    usuarioRouterValidationService.checkBodyMail(req.body.mail);
+    usuarioRouterValidationService.checkBodyPass(req.body.password);
+    usuarioRouterValidationService.checkSchemaLogin(req.body);
+  
     const usuario = await loginService.loguearUsuario(req.body.mail, req.body.password);
 
     await jwt.sign({
@@ -173,13 +99,9 @@ router.post("/login", async function (req, res) {//All
 
 router.put("/:id/cambiarnombre", async function (req, res, next) {//Usuario y Admin
   try {
-    const decodificado = await loginService.validarToken(req);
-    const admin = await loginService.esAdmin(decodificado.id);
-    if(!admin){
-      await loginService.validarTokenId(decodificado.id, req.params.id);
-    }
+    await loginService.checkLogueado(req, req.params.id);
   
-    const response = await usuarioService.cambiarNombre(req.params.id, req.body.mail, req.body.nombre);
+    const response = await usuarioService.cambiarNombre(req.params.id, req.body.nombre);
     return res.status(201).json({
       message: "Cambio de nombre exitoso.",
       response: response,
@@ -193,11 +115,7 @@ router.put("/:id/cambiarnombre", async function (req, res, next) {//Usuario y Ad
 
 router.get("/:id/MisReservas", async function (req, res, next) {//Usuario y Admin
   try {
-    const decodificado = await loginService.validarToken(req);
-    const admin = await loginService.esAdmin(decodificado.id);
-    if(!admin){
-      await loginService.validarTokenId(decodificado.id, req.params.id);
-    }
+    await loginService.checkLogueado(req, req.params.id);
   
     const response = await usuarioService.getMisReservas(req.params.id);
     res.status(201).json({
@@ -214,11 +132,7 @@ router.get("/:id/MisReservas", async function (req, res, next) {//Usuario y Admi
 
 router.delete("/:id/MisReservas/:idReserva", async function (req, res, next) {//Usuario y Admin
   try {
-    const decodificado = await loginService.validarToken(req);
-    const admin = await loginService.esAdmin(decodificado.id);
-    if(!admin){
-      await loginService.validarTokenId(decodificado.id, req.params.id);
-    }
+    await loginService.checkLogueado(req, req.params.id);
   
     const response = await usuarioService.cancelarReserva(req.params.id, req.params.idReserva);
     res.status(201).json({

@@ -1,7 +1,7 @@
 
 const ObjectId = require("mongodb").ObjectId;
 const { obtenerCliente } = require("../database");
-const { Rol } = require("../models/usuario.js");
+const { Rol } = require("../models/usuario");
 
 const getUsuarios = async () => {
   const cliente = obtenerCliente();
@@ -104,13 +104,13 @@ const validarPass = async (mail, password) => {
   }
 };
 
-const cambiarNombre = async (mail, nuevoNombre) => {
+const cambiarNombre = async (id, nuevoNombre) => {
   const cliente = obtenerCliente();
   const collection = cliente.db("mydatabase").collection("usuarios");
 
   try {
     const result = await collection.updateOne(
-      { mail: mail },
+      { _id: new ObjectId(id) },
       {$set:
         {nombre: nuevoNombre}
       }
@@ -127,8 +127,6 @@ const registrarReserva = async (reserva, insertedId) => {
   const collection = cliente.db("mydatabase").collection("usuarios");
 
   try {
-    await checkUsuario(reserva.idUsuario);
-
     const filter = { _id: new ObjectId(reserva.idUsuario) };
     const update = { $push: { reservas: insertedId } };
     const result = await collection.updateOne(filter, update);
@@ -156,14 +154,6 @@ const getMisReservas = async (usuario) => {
   }
 };
 
-const checkUsuario = async (idUsuario) => {
-  const usuario = await getCanchaById(idUsuario);
-  if (!usuario) {
-    throw new Error("El usuario no existe.");
-  }
-  return usuario;
-}
-
 module.exports = {
   getUsuarios,
   getUsuarioById,
@@ -176,5 +166,4 @@ module.exports = {
   cambiarNombre,
   registrarReserva,
   getMisReservas,
-  checkUsuario,
 };
